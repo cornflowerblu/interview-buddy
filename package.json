@@ -1,0 +1,19 @@
+{
+  "name": "interview-buddy",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "bun run --filter './apps/*' dev",
+    "build": "bun run --filter './apps/*' --filter './packages/*' build",
+    "test": "bun test",
+    "lint": "bun run --filter './apps/*' --filter './packages/*' lint"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  }
+}

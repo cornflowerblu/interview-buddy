@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-analyzer-service
+  namespace: dev
+  labels:
+    app: ai-analyzer-service
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-analyzer-service
+  template:
+    metadata:
+      labels:
+        app: ai-analyzer-service
+        environment: dev
+    spec:
+      # Run on Virtual Nodes (ACI) for cost savings
+      nodeSelector:
+        kubernetes.io/role: agent
+        type: virtual-kubelet
+      tolerations:
+        - key: virtual-kubelet.io/provider
+          operator: Exists
+        - key: azure.com/aci
+          effect: NoSchedule
+      containers:
+        - name: ai-analyzer-service
+          image: interviewbuddy.azurecr.io/ai-analyzer-service:latest
+          ports:
+            - containerPort: 3002
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: PORT
+              value: "3002"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-analyzer-service
+  namespace: dev
+spec:
+  selector:
+    app: ai-analyzer-service
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP

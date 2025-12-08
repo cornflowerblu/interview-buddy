@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upload-service
+  namespace: dev
+  labels:
+    app: upload-service
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upload-service
+  template:
+    metadata:
+      labels:
+        app: upload-service
+        environment: dev
+    spec:
+      # Run on Virtual Nodes (ACI) for cost savings
+      nodeSelector:
+        kubernetes.io/role: agent
+        type: virtual-kubelet
+      tolerations:
+        - key: virtual-kubelet.io/provider
+          operator: Exists
+        - key: azure.com/aci
+          effect: NoSchedule
+      containers:
+        - name: upload-service
+          image: interviewbuddy.azurecr.io/upload-service:latest
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upload-service
+  namespace: dev
+spec:
+  selector:
+    app: upload-service
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
