@@ -250,13 +250,14 @@ export interface ListInterviewsResponse {
 /**
  * Error Response
  * 
- * Standard error response format
+ * Standard error response format with correlation ID for distributed tracing
  */
 export interface ErrorResponse {
   error: string;
   message: string;
   statusCode: number;
   timestamp: string;
+  correlationId: string;
   path?: string;
   details?: Record<string, any>;
 }
