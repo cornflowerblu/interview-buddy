@@ -72,13 +72,12 @@ CREATE INDEX "Interview_createdAt_idx" ON "Interview"("createdAt");
 CREATE UNIQUE INDEX "Transcription_interviewId_key" ON "Transcription"("interviewId");
 
 -- CreateIndex
-CREATE INDEX "Transcription_interviewId_idx" ON "Transcription"("interviewId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Analysis_interviewId_key" ON "Analysis"("interviewId");
 
 -- CreateIndex
-CREATE INDEX "Analysis_interviewId_idx" ON "Analysis"("interviewId");
+
 
 -- CreateIndex
 CREATE INDEX "PrepSession_userId_idx" ON "PrepSession"("userId");

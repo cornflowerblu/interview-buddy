@@ -25,7 +25,7 @@ model Interview {
   // Interview metadata (provided by user during upload)
   company         String
   jobTitle        String
-  interviewType   String   // behavioral | technical | phone_screen | panel
+  interviewType   String   // behavioral | technical | phone | panel
   notes           String?  @db.Text
 
   // Processing status and tracking
