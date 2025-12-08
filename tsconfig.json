@@ -1,0 +1,26 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    /* Monorepo Configuration */
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@interview-buddy/shared-types": ["./packages/shared-types/src"],
+      "@interview-buddy/shared-types/*": ["./packages/shared-types/src/*"],
+      "@interview-buddy/shared-utils": ["./packages/shared-utils/src"],
+      "@interview-buddy/shared-utils/*": ["./packages/shared-utils/src/*"],
+      "@interview-buddy/prisma-client": ["./packages/prisma-client"],
+      "@interview-buddy/prisma-client/*": ["./packages/prisma-client/*"]
+    }
+  },
+  "files": [],
+  "references": [
+    { "path": "./packages/shared-types" },
+    { "path": "./packages/shared-utils" },
+    { "path": "./packages/prisma-client" },
+    { "path": "./apps/upload-service" },
+    { "path": "./apps/processor-service" },
+    { "path": "./apps/ai-analyzer-service" },
+    { "path": "./apps/web" }
+  ]
+}
