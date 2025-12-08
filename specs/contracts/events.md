@@ -31,7 +31,7 @@ Consumed by: processor-service
     company: string;
     jobTitle: string;
     interviewType: string;
-  };
+  }
   timestamp: Date;
 }
 ```

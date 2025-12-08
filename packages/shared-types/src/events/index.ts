@@ -1,13 +1,13 @@
 /**
  * Event Payload Types for Interview Buddy
- * 
+ *
  * These events are published to Redis Streams and consumed by microservices
  * to orchestrate the interview processing pipeline.
  */
 
 /**
  * Event emitted when an interview recording is successfully uploaded to Azure Blob Storage
- * 
+ *
  * Consumed by: processor-service
  * Published by: upload-service
  */
@@ -22,7 +22,7 @@ export interface InterviewUploadedEvent {
 
 /**
  * Event emitted when Azure Media Services completes transcription of an interview
- * 
+ *
  * Consumed by: ai-analyzer-service
  * Published by: processor-service
  */
@@ -38,7 +38,7 @@ export interface InterviewTranscribedEvent {
 
 /**
  * Event emitted when AI analysis of an interview is completed
- * 
+ *
  * Consumed by: notification-service, web (via WebSocket/SSE)
  * Published by: ai-analyzer-service
  */
@@ -52,7 +52,7 @@ export interface AnalysisCompletedEvent {
 
 /**
  * Event emitted when processing fails at any stage
- * 
+ *
  * Consumed by: notification-service, web (via WebSocket/SSE)
  * Published by: any service
  */
@@ -67,9 +67,9 @@ export interface ProcessingFailedEvent {
 /**
  * Union type of all event types for type-safe event handling
  */
-export type InterviewEvent = 
-  | InterviewUploadedEvent 
-  | InterviewTranscribedEvent 
+export type InterviewEvent =
+  | InterviewUploadedEvent
+  | InterviewTranscribedEvent
   | AnalysisCompletedEvent
   | ProcessingFailedEvent;
 
@@ -83,4 +83,4 @@ export const EventNames = {
   PROCESSING_FAILED: 'processing.failed',
 } as const;
 
-export type EventName = typeof EventNames[keyof typeof EventNames];
+export type EventName = (typeof EventNames)[keyof typeof EventNames];
