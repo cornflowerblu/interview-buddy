@@ -1,9 +1,20 @@
-# Prisma
+# Dependencies
 node_modules
+
+# Environment files
 .env
+.env.local
+
+# Database files
 *.db
 *.db-journal
 
-# Generated files
-index.js
-index.d.ts
+# Generated Prisma Client
+node_modules/.prisma
+node_modules/@prisma
+
+# Compiled TypeScript output
+dist/
+*.js
+*.d.ts
+!index.ts
