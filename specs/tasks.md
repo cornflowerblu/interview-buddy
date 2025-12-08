@@ -1,0 +1,616 @@
+# Tasks: Interview Buddy MVP
+
+**Input**: Design documents from `/home/rurich/Development/interview-buddy/specs/`
+**Prerequisites**: plan.md, spec.md
+
+**Tests**: Tests are NOT explicitly requested in spec.md, so test tasks are excluded from this file per SpecKit guidelines.
+
+**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+
+## Format: `[ID] [P?] [Story] Description`
+
+- **[P]**: Can run in parallel (different files, no dependencies)
+- **[Story]**: Which user story this task belongs to (e.g., US1.1, US1.2, etc.)
+- Include exact file paths in descriptions
+
+## Path Conventions
+
+This is a **monorepo** with the following structure (from plan.md):
+
+```
+apps/
+├── web/                          # Next.js frontend + API gateway
+├── upload-service/               # NestJS microservice
+├── processor-service/            # NestJS microservice
+├── ai-analyzer-service/          # NestJS microservice
+└── notification-service/         # NestJS microservice
+
+packages/
+├── shared-types/                 # Shared TypeScript interfaces
+├── shared-utils/                 # Common utilities
+└── prisma-client/                # Shared Prisma schema + client
+```
+
+---
+
+## Phase 1: Setup (Shared Infrastructure)
+
+**Purpose**: Project initialization and monorepo structure
+
+- [ ] T001 Initialize monorepo package.json with workspaces for apps/ and packages/
+- [ ] T002 [P] Setup TypeScript configuration with strict mode in root tsconfig.json
+- [ ] T003 [P] Configure ESLint and Prettier for monorepo in .eslintrc.js and .prettierrc
+- [ ] T004 [P] Create packages/shared-types/package.json with TypeScript setup
+- [ ] T005 [P] Create packages/shared-utils/package.json with utility structure
+- [ ] T006 Create packages/prisma-client/prisma/schema.prisma with base entities (User reference, Interview, Transcription, Analysis, PrepSession)
+- [ ] T007 Setup Prisma client generation in packages/prisma-client/package.json
+- [ ] T008 Configure Docker ignore files (.dockerignore) for all services
+- [ ] T009 [P] Setup Jest configuration for monorepo testing in jest.config.js
+
+**Checkpoint**: Monorepo structure ready for service implementation
+
+---
+
+## Phase 2: Foundational (Blocking Prerequisites)
+
+**Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
+
+**⚠️ CRITICAL**: No user story work can begin until this phase is complete
+
+### Database & Shared Packages
+
+- [ ] T010 Define Interview model in packages/prisma-client/prisma/schema.prisma
+- [ ] T011 [P] Define Transcription model in packages/prisma-client/prisma/schema.prisma
+- [ ] T012 [P] Define Analysis model in packages/prisma-client/prisma/schema.prisma
+- [ ] T013 [P] Define PrepSession model in packages/prisma-client/prisma/schema.prisma
+- [ ] T014 Create initial Prisma migration for all models
+- [ ] T015 [P] Define event payload types in packages/shared-types/src/events/index.ts (interview.uploaded, interview.transcribed, analysis.completed)
+- [ ] T016 [P] Define API contract types in packages/shared-types/src/api/index.ts
+- [ ] T017 [P] Create validation utilities in packages/shared-utils/src/validation/index.ts
+- [ ] T018 [P] Create logging utilities in packages/shared-utils/src/logging/index.ts
+- [ ] T019 [P] Create error handling utilities in packages/shared-utils/src/errors/index.ts
+
+### Kubernetes Infrastructure
+
+- [ ] T020 Create Redis deployment manifest in manifests/local/redis-deployment.yaml
+- [ ] T021 Create Redis service manifest in manifests/local/redis-service.yaml
+- [ ] T022 Create PostgreSQL deployment manifest in manifests/local/postgres-deployment.yaml
+- [ ] T023 Create PostgreSQL service manifest in manifests/local/postgres-service.yaml
+- [ ] T024 Update manifests/local/kustomization.yaml to include Redis and PostgreSQL
+- [ ] T025 Create Sealed Secrets for Azure credentials in manifests/local/sealed-secrets.yaml
+- [ ] T026 Deploy Redis and PostgreSQL to Minikube using kubectl apply -k manifests/local/
+
+### Next.js API Gateway (Web App)
+
+- [ ] T027 Initialize Next.js 16 app in apps/web/ with TypeScript and App Router
+- [ ] T028 Setup Firebase Authentication SDK in apps/web/src/lib/firebase.ts
+- [ ] T029 Create authentication middleware in apps/web/src/middleware.ts for JWT validation
+- [ ] T030 Create base API route structure in apps/web/src/app/api/
+- [ ] T031 [P] Setup environment variables in apps/web/.env.local for service URLs and Firebase config
+- [ ] T032 [P] Configure Next.js standalone output mode in apps/web/next.config.js
+- [ ] T033 Create apps/web/Dockerfile for containerization
+
+**Checkpoint**: Foundation ready - user story implementation can now begin in parallel
+
+---
+
+## Phase 3: User Story P1.1 - File Upload (Priority: P1) 🎯 MVP
+
+**Goal**: Allow users to upload interview recordings up to 2GB with resumable uploads
+
+**Independent Test**: User can upload a 1GB video file, see upload progress, and receive confirmation when complete. Upload can be resumed if interrupted.
+
+**User Story from spec.md**: P1.1 - As a job seeker, I want to upload my interview recording so that I can get AI feedback on my performance
+
+### NestJS Upload Service Setup
+
+- [ ] T034 [P1.1] Initialize NestJS application in apps/upload-service/ with TypeScript
+- [ ] T035 [P1.1] Add dependencies to apps/upload-service/package.json: @nestjs/microservices, @nestjs/platform-express, @azure/storage-blob, @tus/server
+- [ ] T036 [P1.1] Configure Redis microservice transport in apps/upload-service/src/main.ts
+- [ ] T037 [P1.1] Create upload module in apps/upload-service/src/modules/upload/upload.module.ts
+- [ ] T038 [P1.1] Create storage module in apps/upload-service/src/modules/storage/storage.module.ts
+
+### File Upload Implementation
+
+- [ ] T039 [P] [P1.1] Create upload controller in apps/upload-service/src/modules/upload/upload.controller.ts with POST /upload endpoint
+- [ ] T040 [P] [P1.1] Create Azure Blob Storage service in apps/upload-service/src/modules/storage/blob.service.ts
+- [ ] T041 [P1.1] Implement tus protocol server in apps/upload-service/src/modules/upload/tus.service.ts for chunked uploads
+- [ ] T042 [P1.1] Implement file validation (type, size) in apps/upload-service/src/modules/upload/upload.service.ts
+- [ ] T043 [P1.1] Create upload progress tracking in apps/upload-service/src/modules/upload/upload.service.ts
+- [ ] T044 [P1.1] Implement Interview record creation in apps/upload-service/src/modules/upload/upload.service.ts using Prisma
+- [ ] T045 [P1.1] Emit interview.uploaded event in apps/upload-service/src/events/upload.emitter.ts using Redis transport
+- [ ] T046 [P1.1] Create apps/upload-service/Dockerfile for containerization
+
+### Kubernetes Deployment
+
+- [ ] T047 [P1.1] Create upload service deployment manifest in manifests/local/upload-service-deployment.yaml
+- [ ] T048 [P1.1] Create upload service Kubernetes service in manifests/local/upload-service-service.yaml
+- [ ] T049 [P1.1] Create Istio VirtualService for upload service routing in manifests/local/upload-virtualservice.yaml
+
+### Next.js Frontend Integration
+
+- [ ] T050 [P] [P1.1] Create upload API route in apps/web/src/app/api/upload/route.ts proxying to upload-service
+- [ ] T051 [P] [P1.1] Create upload UI component in apps/web/src/components/UploadForm.tsx with tus-js-client
+- [ ] T052 [P] [P1.1] Implement upload progress tracking in apps/web/src/components/UploadProgress.tsx
+- [ ] T053 [P1.1] Create upload page in apps/web/src/app/upload/page.tsx
+
+**Checkpoint**: User Story P1.1 complete - Users can upload files with resumable uploads and see progress
+
+---
+
+## Phase 4: User Story P1.2 - Interview Metadata (Priority: P1) 🎯 MVP
+
+**Goal**: Allow users to provide context about their interview (company, job title, type, notes, job description)
+
+**Independent Test**: User can enter interview metadata before/during upload and edit it after upload completes
+
+**User Story from spec.md**: P1.2 - As a job seeker, I want to provide context about my interview so that the AI analysis is relevant
+
+### Metadata Collection Implementation
+
+- [ ] T054 [P] [P1.2] Add metadata fields to Interview model in packages/prisma-client/prisma/schema.prisma (company, jobTitle, interviewType, notes, jobDescription)
+- [ ] T055 [P] [P1.2] Create Prisma migration for metadata fields
+- [ ] T056 [P] [P1.2] Create metadata API types in packages/shared-types/src/api/metadata.ts
+- [ ] T057 [P1.2] Implement PATCH /upload/:id/metadata endpoint in apps/upload-service/src/modules/upload/upload.controller.ts
+- [ ] T058 [P1.2] Add metadata validation in apps/upload-service/src/modules/upload/upload.service.ts
+
+### Frontend Metadata UI
+
+- [ ] T059 [P] [P1.2] Create metadata form component in apps/web/src/components/MetadataForm.tsx
+- [ ] T060 [P] [P1.2] Add metadata fields to upload page in apps/web/src/app/upload/page.tsx
+- [ ] T061 [P1.2] Create metadata edit API route in apps/web/src/app/api/upload/[id]/metadata/route.ts
+- [ ] T062 [P1.2] Create metadata edit page in apps/web/src/app/interviews/[id]/edit/page.tsx
+
+**Checkpoint**: User Story P1.2 complete - Users can provide and edit interview context metadata
+
+---
+
+## Phase 5: User Story P1.3 - Processing Status (Priority: P1) 🎯 MVP
+
+**Goal**: Show users processing status (Uploaded → Transcribing → Analyzing → Complete) with notifications
+
+**Independent Test**: User can view their interview dashboard showing all uploads with current status and estimated time remaining
+
+**User Story from spec.md**: P1.3 - As a job seeker, I want to see when my recording is being processed so that I know when to expect results
+
+### Processor Service Setup
+
+- [ ] T063 [P1.3] Initialize NestJS application in apps/processor-service/ with TypeScript
+- [ ] T064 [P1.3] Add dependencies to apps/processor-service/package.json: @nestjs/microservices, @azure/arm-mediaservices, @azure/ms-rest-js
+- [ ] T065 [P1.3] Configure Redis microservice transport in apps/processor-service/src/main.ts
+- [ ] T066 [P1.3] Create transcription module in apps/processor-service/src/modules/transcription/transcription.module.ts
+- [ ] T067 [P1.3] Create jobs module in apps/processor-service/src/modules/jobs/jobs.module.ts
+
+### Transcription Processing
+
+- [ ] T068 [P] [P1.3] Create Azure Media Services client in apps/processor-service/src/modules/transcription/media-services.client.ts
+- [ ] T069 [P] [P1.3] Create event consumer for interview.uploaded in apps/processor-service/src/events/upload.consumer.ts
+- [ ] T070 [P1.3] Implement job submission to Azure Media Services in apps/processor-service/src/modules/jobs/jobs.service.ts
+- [ ] T071 [P1.3] Implement job status polling in apps/processor-service/src/modules/jobs/jobs.service.ts with exponential backoff
+- [ ] T072 [P1.3] Update Interview status in Prisma when jobs progress in apps/processor-service/src/modules/jobs/jobs.service.ts
+- [ ] T073 [P1.3] Store transcription results in Transcription table via Prisma in apps/processor-service/src/modules/transcription/transcription.service.ts
+- [ ] T074 [P1.3] Emit interview.transcribed event in apps/processor-service/src/events/transcription.emitter.ts
+- [ ] T075 [P1.3] Create apps/processor-service/Dockerfile for containerization
+
+### Kubernetes Deployment
+
+- [ ] T076 [P1.3] Create processor service deployment manifest in manifests/local/processor-service-deployment.yaml
+- [ ] T077 [P1.3] Create processor service Kubernetes service in manifests/local/processor-service-service.yaml
+
+### Status Dashboard
+
+- [ ] T078 [P] [P1.3] Create dashboard API route in apps/web/src/app/api/interviews/route.ts fetching user's interviews from Prisma
+- [ ] T079 [P] [P1.3] Create interview status component in apps/web/src/components/InterviewStatus.tsx
+- [ ] T080 [P] [P1.3] Create dashboard page in apps/web/src/app/dashboard/page.tsx
+- [ ] T081 [P1.3] Implement status polling in dashboard using SWR or React Query
+
+### Notification Service Setup
+
+- [ ] T082 [P1.3] Initialize NestJS application in apps/notification-service/ with TypeScript
+- [ ] T083 [P1.3] Add dependencies to apps/notification-service/package.json: @nestjs/microservices, nodemailer
+- [ ] T084 [P1.3] Configure Redis microservice transport in apps/notification-service/src/main.ts
+- [ ] T085 [P1.3] Create email module in apps/notification-service/src/modules/email/email.module.ts
+- [ ] T086 [P] [P1.3] Create email templates in apps/notification-service/src/modules/email/templates/
+- [ ] T087 [P] [P1.3] Create event consumer for analysis.completed in apps/notification-service/src/events/analysis.consumer.ts
+- [ ] T088 [P1.3] Implement email sending in apps/notification-service/src/modules/email/email.service.ts
+- [ ] T089 [P1.3] Create apps/notification-service/Dockerfile for containerization
+- [ ] T090 [P1.3] Create notification service deployment manifest in manifests/local/notification-service-deployment.yaml
+
+**Checkpoint**: User Story P1.3 complete - Users can view processing status on dashboard and receive email notifications
+
+---
+
+## Phase 6: User Story P1.4 - AI Analysis Insights (Priority: P1) 🎯 MVP
+
+**Goal**: Provide AI-powered analysis of interview performance with speech metrics, content analysis, sentiment, and recommendations
+
+**Independent Test**: User can view completed analysis showing transcription, filler word count, speaking pace, STAR method usage, confidence score, and actionable recommendations
+
+**User Story from spec.md**: P1.4 - As a job seeker, I want to view AI insights about my interview performance so that I can improve
+
+### AI Analyzer Service Setup
+
+- [ ] T091 [P1.4] Initialize NestJS application in apps/ai-analyzer-service/ with TypeScript
+- [ ] T092 [P1.4] Add dependencies to apps/ai-analyzer-service/package.json: @nestjs/microservices, openai, @anthropic-ai/sdk
+- [ ] T093 [P1.4] Configure Redis microservice transport in apps/ai-analyzer-service/src/main.ts
+- [ ] T094 [P1.4] Create analysis module in apps/ai-analyzer-service/src/modules/analysis/analysis.module.ts
+- [ ] T095 [P1.4] Create AI module in apps/ai-analyzer-service/src/modules/ai/ai.module.ts
+
+### Speech Analysis Implementation
+
+- [ ] T096 [P] [P1.4] Create filler word detection service in apps/ai-analyzer-service/src/modules/analysis/speech-metrics.service.ts
+- [ ] T097 [P] [P1.4] Implement speaking pace (WPM) calculation in apps/ai-analyzer-service/src/modules/analysis/speech-metrics.service.ts
+- [ ] T098 [P] [P1.4] Implement pause detection in apps/ai-analyzer-service/src/modules/analysis/speech-metrics.service.ts
+
+### AI Analysis Implementation
+
+- [ ] T099 [P] [P1.4] Create OpenAI client wrapper in apps/ai-analyzer-service/src/modules/ai/openai.client.ts
+- [ ] T100 [P] [P1.4] Create Claude client wrapper in apps/ai-analyzer-service/src/modules/ai/claude.client.ts
+- [ ] T101 [P1.4] Create AI provider selection logic in apps/ai-analyzer-service/src/modules/ai/ai.service.ts (Azure AI Foundry routing)
+- [ ] T102 [P] [P1.4] Implement STAR method detection prompt in apps/ai-analyzer-service/src/modules/analysis/star-detector.service.ts
+- [ ] T103 [P] [P1.4] Implement sentiment analysis prompt in apps/ai-analyzer-service/src/modules/analysis/sentiment.service.ts
+- [ ] T104 [P] [P1.4] Implement answer relevance scoring in apps/ai-analyzer-service/src/modules/analysis/content-analyzer.service.ts
+- [ ] T105 [P1.4] Generate recommendations in apps/ai-analyzer-service/src/modules/analysis/recommendations.service.ts
+
+### Event Processing & Storage
+
+- [ ] T106 [P1.4] Create event consumer for interview.transcribed in apps/ai-analyzer-service/src/events/transcription.consumer.ts
+- [ ] T107 [P1.4] Orchestrate all analysis services in apps/ai-analyzer-service/src/modules/analysis/analysis-orchestrator.service.ts
+- [ ] T108 [P1.4] Store Analysis results in Prisma in apps/ai-analyzer-service/src/modules/analysis/analysis.service.ts
+- [ ] T109 [P1.4] Emit analysis.completed event in apps/ai-analyzer-service/src/events/analysis.emitter.ts
+- [ ] T110 [P1.4] Create apps/ai-analyzer-service/Dockerfile for containerization
+
+### Kubernetes Deployment
+
+- [ ] T111 [P1.4] Create ai-analyzer service deployment manifest in manifests/local/ai-analyzer-service-deployment.yaml
+- [ ] T112 [P1.4] Create ai-analyzer service Kubernetes service in manifests/local/ai-analyzer-service-service.yaml
+
+### Analysis Results UI
+
+- [ ] T113 [P] [P1.4] Create analysis API route in apps/web/src/app/api/interviews/[id]/analysis/route.ts
+- [ ] T114 [P] [P1.4] Create transcription viewer component in apps/web/src/components/TranscriptionViewer.tsx
+- [ ] T115 [P] [P1.4] Create speech metrics component in apps/web/src/components/SpeechMetrics.tsx
+- [ ] T116 [P] [P1.4] Create content analysis component in apps/web/src/components/ContentAnalysis.tsx
+- [ ] T117 [P] [P1.4] Create sentiment chart component in apps/web/src/components/SentimentChart.tsx
+- [ ] T118 [P] [P1.4] Create recommendations component in apps/web/src/components/Recommendations.tsx
+- [ ] T119 [P1.4] Create analysis detail page in apps/web/src/app/interviews/[id]/page.tsx integrating all components
+
+**Checkpoint**: User Story P1.4 complete - Users can view comprehensive AI analysis of their interview performance
+
+**🎯 MVP COMPLETE**: All P1 (Must Have) user stories are now functional. System can upload, process, analyze, and display interview insights.
+
+---
+
+## Phase 7: User Story P2.1 - Pre-Interview Preparation (Priority: P2)
+
+**Goal**: Allow users to create prep sessions with AI-generated questions and practice answers
+
+**Independent Test**: User can create a prep session, see AI-generated questions based on job details, practice answering via text, and receive AI feedback
+
+**User Story from spec.md**: P2.1 - As a job seeker, I want to prepare for my interview with AI coaching so that I can practice beforehand
+
+### Prep Session Data Model
+
+- [ ] T120 [P] [P2.1] Add PrepSession entity to packages/prisma-client/prisma/schema.prisma with questions and practice answers
+- [ ] T121 [P2.1] Create Prisma migration for PrepSession model
+
+### Prep Session API
+
+- [ ] T122 [P] [P2.1] Create prep session API route in apps/web/src/app/api/prep/route.ts for CRUD operations
+- [ ] T123 [P] [P2.1] Implement question generation using AI in apps/ai-analyzer-service/src/modules/prep/question-generator.service.ts
+- [ ] T124 [P] [P2.1] Implement practice answer feedback using AI in apps/ai-analyzer-service/src/modules/prep/feedback.service.ts
+- [ ] T125 [P2.1] Create REST endpoints for prep sessions in apps/upload-service/src/modules/prep/prep.controller.ts
+
+### Prep Session UI
+
+- [ ] T126 [P] [P2.1] Create prep session creation page in apps/web/src/app/prep/new/page.tsx
+- [ ] T127 [P] [P2.1] Create question list component in apps/web/src/components/PrepQuestions.tsx
+- [ ] T128 [P] [P2.1] Create practice answer form in apps/web/src/components/PracticeAnswerForm.tsx
+- [ ] T129 [P] [P2.1] Create AI feedback display in apps/web/src/components/AIFeedback.tsx
+- [ ] T130 [P2.1] Create prep session detail page in apps/web/src/app/prep/[id]/page.tsx
+
+**Checkpoint**: User Story P2.1 complete - Users can prepare for interviews with AI coaching
+
+---
+
+## Phase 8: User Story P2.2 - Prep vs Actual Comparison (Priority: P2)
+
+**Goal**: Compare actual interview performance against prep work to identify where user deviated
+
+**Independent Test**: User can link an uploaded recording to existing prep session and see side-by-side comparison of prep vs actual answers
+
+**User Story from spec.md**: P2.2 - As a job seeker, I want to compare my actual interview performance against my prep work so that I see where I deviated
+
+### Comparison Implementation
+
+- [ ] T131 [P] [P2.2] Add prepSessionId field to Interview model in packages/prisma-client/prisma/schema.prisma
+- [ ] T132 [P2.2] Create Prisma migration for prepSessionId foreign key
+- [ ] T133 [P] [P2.2] Create comparison module in apps/ai-analyzer-service/src/modules/comparison/comparison.module.ts
+- [ ] T134 [P2.2] Implement prep vs actual comparison logic in apps/ai-analyzer-service/src/modules/comparison/comparison.service.ts
+- [ ] T135 [P2.2] Extend Analysis model to include comparisonMetrics in packages/prisma-client/prisma/schema.prisma
+- [ ] T136 [P2.2] Create Prisma migration for comparison metrics
+
+### Comparison UI
+
+- [ ] T137 [P] [P2.2] Create comparison API route in apps/web/src/app/api/interviews/[id]/comparison/route.ts
+- [ ] T138 [P] [P2.2] Create side-by-side comparison component in apps/web/src/components/PrepVsActual.tsx
+- [ ] T139 [P] [P2.2] Create improvement score visualization in apps/web/src/components/ImprovementScore.tsx
+- [ ] T140 [P2.2] Create comparison view page in apps/web/src/app/interviews/[id]/comparison/page.tsx
+
+**Checkpoint**: User Story P2.2 complete - Users can compare prep work against actual interview performance
+
+---
+
+## Phase 9: User Story P3.1 - Performance Tracking (Priority: P3)
+
+**Goal**: Track interview performance over time with trend charts and historical comparisons
+
+**Independent Test**: User with multiple interviews can view dashboard showing performance trends across interviews
+
+**User Story from spec.md**: P3.1 - As a job seeker, I want to track my interview performance over time so that I can measure improvement
+
+### Performance Tracking Implementation
+
+- [ ] T141 [P] [P3.1] Create analytics API route in apps/web/src/app/api/analytics/route.ts aggregating user interview data
+- [ ] T142 [P] [P3.1] Implement trend calculation in apps/web/src/lib/analytics.ts
+- [ ] T143 [P] [P3.1] Create performance chart component in apps/web/src/components/PerformanceChart.tsx using Chart.js or Recharts
+- [ ] T144 [P] [P3.1] Create company/type comparison component in apps/web/src/components/ComparisonChart.tsx
+- [ ] T145 [P3.1] Create analytics dashboard page in apps/web/src/app/analytics/page.tsx
+
+### PDF Export
+
+- [ ] T146 [P] [P3.1] Add PDF generation library to apps/web/package.json (e.g., jsPDF or Puppeteer)
+- [ ] T147 [P3.1] Create PDF export API route in apps/web/src/app/api/analytics/export/route.ts
+- [ ] T148 [P3.1] Implement PDF report generation in apps/web/src/lib/pdf-generator.ts
+
+**Checkpoint**: User Story P3.1 complete - Users can track performance over time and export reports
+
+---
+
+## Phase 10: User Story P3.2 - Targeted Practice (Priority: P3)
+
+**Goal**: Generate targeted practice questions for weak areas and track skill-specific improvement
+
+**Independent Test**: User can request practice questions for specific skills (e.g., behavioral, storytelling) and see improvement in those areas
+
+**User Story from spec.md**: P3.2 - As a job seeker, I want to practice specific interview skills so that I can target weak areas
+
+### Skill-Specific Practice
+
+- [ ] T149 [P] [P3.2] Extend PrepSession model to include skillFocus field in packages/prisma-client/prisma/schema.prisma
+- [ ] T150 [P3.2] Create Prisma migration for skill tracking
+- [ ] T151 [P] [P3.2] Implement skill detection in analysis results in apps/ai-analyzer-service/src/modules/analysis/skill-detector.service.ts
+- [ ] T152 [P3.2] Generate skill-specific practice questions in apps/ai-analyzer-service/src/modules/prep/skill-generator.service.ts
+- [ ] T153 [P] [P3.2] Create skill practice UI in apps/web/src/app/practice/[skill]/page.tsx
+- [ ] T154 [P3.2] Track skill improvement over time in apps/web/src/components/SkillProgress.tsx
+
+**Checkpoint**: User Story P3.2 complete - Users can practice targeted skills and measure improvement
+
+---
+
+## Phase 11: Polish & Cross-Cutting Concerns
+
+**Purpose**: Improvements that affect multiple user stories and production readiness
+
+### Error Handling & Resilience
+
+- [ ] T155 [P] Implement dead-letter queue for failed events in all microservices
+- [ ] T156 [P] Add retry logic with exponential backoff for Azure API calls
+- [ ] T157 [P] Implement circuit breakers for external API calls (OpenAI, Azure) using resilience libraries
+- [ ] T158 [P] Add graceful shutdown handlers in all NestJS services
+
+### Observability
+
+- [ ] T159 [P] Add OpenTelemetry instrumentation to all NestJS services
+- [ ] T160 [P] Configure Jaeger tracing in manifests/local/jaeger-deployment.yaml
+- [ ] T161 [P] Create Grafana dashboards for key metrics in manifests/local/grafana-dashboards.yaml
+- [ ] T162 [P] Setup Prometheus scraping in manifests/local/prometheus-config.yaml
+
+### Security
+
+- [ ] T163 [P] Implement Azure Key Vault integration for secrets in all services
+- [ ] T164 [P] Add request rate limiting to Next.js API routes
+- [ ] T165 [P] Implement CORS configuration in all NestJS services
+- [ ] T166 [P] Add input sanitization to prevent XSS in Next.js frontend
+- [ ] T167 [P] Configure Istio mTLS policies in manifests/local/istio-mtls-policy.yaml
+
+### Performance Optimization
+
+- [ ] T168 [P] Add caching layer using Redis for frequently accessed analysis results
+- [ ] T169 [P] Implement database query optimization with Prisma indexes
+- [ ] T170 [P] Add Next.js image optimization for dashboard thumbnails
+- [ ] T171 [P] Implement server-side pagination for interview lists
+
+### Documentation
+
+- [ ] T172 [P] Create API documentation using Swagger for all NestJS services
+- [ ] T173 [P] Write deployment guide in docs/deployment.md
+- [ ] T174 [P] Create developer quickstart in docs/quickstart.md
+- [ ] T175 [P] Document environment variables in .env.example files
+
+### Deployment & CI/CD
+
+- [ ] T176 [P] Create production Kubernetes manifests in manifests/prod/
+- [ ] T177 [P] Setup Flux CD for production in flux/prod/kustomization.yaml
+- [ ] T178 [P] Configure autoscaling policies for all services
+- [ ] T179 [P] Create health check endpoints in all NestJS services
+- [ ] T180 [P] Setup Azure Monitor integration for production logging
+
+**Checkpoint**: System is production-ready with observability, security, and resilience
+
+---
+
+## Dependencies & Execution Order
+
+### Phase Dependencies
+
+- **Phase 1 (Setup)**: No dependencies - can start immediately
+- **Phase 2 (Foundational)**: Depends on Setup completion - BLOCKS all user stories
+- **Phase 3-6 (P1 User Stories - MVP)**: All depend on Foundational phase completion
+  - P1.1 (Upload) → Can start after Foundational
+  - P1.2 (Metadata) → Depends on P1.1 (needs upload service)
+  - P1.3 (Processing) → Depends on P1.1 (needs interview.uploaded event)
+  - P1.4 (Analysis) → Depends on P1.3 (needs interview.transcribed event)
+- **Phase 7-8 (P2 User Stories)**: Can start after Foundational, but benefit from P1 completion
+  - P2.1 (Prep) → Independent, can start after Foundational
+  - P2.2 (Comparison) → Depends on P1.4 and P2.1 (needs both analysis and prep)
+- **Phase 9-10 (P3 User Stories)**: Depend on multiple P1 interviews being analyzed
+  - P3.1 (Tracking) → Depends on P1.4 (needs analysis data)
+  - P3.2 (Practice) → Depends on P1.4 and P2.1 (needs skill detection + prep framework)
+- **Phase 11 (Polish)**: Depends on all desired user stories being complete
+
+### User Story Dependencies
+
+- **P1.1 (Upload)**: Independent after Foundational
+- **P1.2 (Metadata)**: Requires P1.1
+- **P1.3 (Processing)**: Requires P1.1
+- **P1.4 (Analysis)**: Requires P1.3
+- **P2.1 (Prep)**: Independent after Foundational
+- **P2.2 (Comparison)**: Requires P1.4 + P2.1
+- **P3.1 (Tracking)**: Requires P1.4
+- **P3.2 (Practice)**: Requires P1.4 + P2.1
+
+### Critical Path (MVP - P1 Only)
+
+```
+Setup → Foundational → P1.1 → P1.2 → P1.3 → P1.4 → MVP DONE
+```
+
+### Parallel Opportunities
+
+**After Foundational Phase Completes**:
+- P1.1 (Upload) and P2.1 (Prep) can be built in parallel by different developers
+- All models in a phase marked [P] can be created in parallel
+- All API routes marked [P] can be created in parallel
+- Frontend components marked [P] can be created in parallel
+
+**Example - Phase 6 Parallel Tasks**:
+```bash
+# Run in parallel:
+- T096 [P] Filler word detection
+- T097 [P] Speaking pace calculation
+- T098 [P] Pause detection
+- T099 [P] OpenAI client wrapper
+- T100 [P] Claude client wrapper
+- T102 [P] STAR method detection
+- T103 [P] Sentiment analysis
+- T104 [P] Answer relevance scoring
+```
+
+---
+
+## Parallel Example: User Story P1.4 (AI Analysis)
+
+```bash
+# Launch all speech analysis services together:
+Task: "Create filler word detection service" [T096]
+Task: "Implement speaking pace calculation" [T097]
+Task: "Implement pause detection" [T098]
+
+# Launch all AI client wrappers together:
+Task: "Create OpenAI client wrapper" [T099]
+Task: "Create Claude client wrapper" [T100]
+
+# Launch all analysis prompts together:
+Task: "Implement STAR method detection prompt" [T102]
+Task: "Implement sentiment analysis prompt" [T103]
+Task: "Implement answer relevance scoring" [T104]
+
+# Launch all UI components together:
+Task: "Create transcription viewer component" [T114]
+Task: "Create speech metrics component" [T115]
+Task: "Create content analysis component" [T116]
+Task: "Create sentiment chart component" [T117]
+Task: "Create recommendations component" [T118]
+```
+
+---
+
+## Implementation Strategy
+
+### MVP First (P1 User Stories Only)
+
+1. Complete Phase 1: Setup
+2. Complete Phase 2: Foundational (CRITICAL - blocks all stories)
+3. Complete Phase 3: P1.1 (Upload)
+4. Complete Phase 4: P1.2 (Metadata)
+5. Complete Phase 5: P1.3 (Processing)
+6. Complete Phase 6: P1.4 (Analysis)
+7. **STOP and VALIDATE**: Test full upload → analysis flow with real interview recording
+8. Deploy to AKS dev environment
+
+**MVP Success Criteria** (from spec.md):
+- [ ] User can upload 1GB video and receive full analysis within 1 hour
+- [ ] Speech analysis shows accurate filler word count (±5% manual count)
+- [ ] Transcription accuracy >90% for clear audio
+- [ ] End-to-end tracing visible in Jaeger
+- [ ] All microservices deployed to AKS with Istio mTLS
+- [ ] 10 beta users successfully analyze real interviews
+
+### Incremental Delivery (Add P2 Features)
+
+1. Complete MVP (P1 stories)
+2. Add Phase 7: P2.1 (Prep) → Test independently
+3. Add Phase 8: P2.2 (Comparison) → Test with existing P1 interviews
+4. Deploy/Demo Phase 2 features
+
+### Full Feature Set (Add P3 Enhancements)
+
+1. Complete P1 + P2
+2. Add Phase 9: P3.1 (Tracking) → Requires multiple interviews in system
+3. Add Phase 10: P3.2 (Practice) → Test skill improvement tracking
+4. Complete Phase 11: Polish → Production readiness
+5. Production deployment
+
+### Parallel Team Strategy
+
+With multiple developers:
+
+1. **Week 1**: Team completes Setup + Foundational together
+2. **Week 2**: Once Foundational is done:
+   - Developer A: Phase 3 (P1.1 Upload) + Phase 4 (P1.2 Metadata)
+   - Developer B: Phase 5 (P1.3 Processing)
+   - Developer C: Phase 7 (P2.1 Prep - can start independently)
+3. **Week 3**:
+   - Developer A: Phase 6 (P1.4 Analysis)
+   - Developer B: Phase 8 (P2.2 Comparison - needs A to finish P1.4)
+   - Developer C: Phase 9 (P3.1 Tracking)
+4. **Week 4**: Integration, testing, and Phase 11 (Polish)
+
+---
+
+## Notes
+
+- **[P] tasks**: Different files, no dependencies - can run in parallel
+- **[Story] label**: Maps task to specific user story for traceability
+- **MVP scope**: Phase 1-6 (P1 user stories) delivers fully functional system
+- **Tests excluded**: spec.md does not explicitly request tests, so test tasks omitted per SpecKit guidelines
+- **Research pending**: Some technical decisions pending research.md (Azure Media Services vs Video Indexer, tus library, multi-model routing) - tasks assume standard implementations
+- **Commit strategy**: Commit after each task or logical group
+- **Independent testing**: Each user story should be independently testable at its checkpoint
+- **Event-driven flow**: Upload → Processor → AI Analyzer → Notification (via Redis Streams)
+- **Istio integration**: All service-to-service communication uses mTLS, distributed tracing enabled
+
+---
+
+## Task Summary
+
+- **Total Tasks**: 180
+- **Phase 1 (Setup)**: 9 tasks
+- **Phase 2 (Foundational)**: 24 tasks (BLOCKING)
+- **Phase 3 (P1.1 Upload)**: 20 tasks
+- **Phase 4 (P1.2 Metadata)**: 9 tasks
+- **Phase 5 (P1.3 Processing)**: 28 tasks
+- **Phase 6 (P1.4 Analysis)**: 29 tasks (MVP complete at T119)
+- **Phase 7 (P2.1 Prep)**: 11 tasks
+- **Phase 8 (P2.2 Comparison)**: 10 tasks
+- **Phase 9 (P3.1 Tracking)**: 8 tasks
+- **Phase 10 (P3.2 Practice)**: 6 tasks
+- **Phase 11 (Polish)**: 26 tasks
+
+**MVP Task Count**: 119 tasks (Phase 1-6)
+**Full Feature Set**: 180 tasks
+
+**Parallel Opportunities**: 78 tasks marked [P] can run in parallel within their phase
+
+**Suggested MVP Scope**: Phase 1-6 (P1 user stories) - delivers upload, processing, and AI analysis
