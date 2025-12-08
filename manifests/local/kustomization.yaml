@@ -1,0 +1,31 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev
+
+resources:
+  - namespace.yaml
+  - upload-service-deployment.yaml
+  - processor-service-deployment.yaml
+  - ai-analyzer-service-deployment.yaml
+  - web-deployment.yaml
+
+# Override image pull policy for local development
+patches:
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Never
+    target:
+      kind: Deployment
+
+  # Lower resource requests for local dev
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/cpu
+        value: "50m"
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/requests/memory
+        value: "64Mi"
+    target:
+      kind: Deployment

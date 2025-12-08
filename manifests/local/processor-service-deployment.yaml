@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: processor-service
+  namespace: dev
+  labels:
+    app: processor-service
+    environment: dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: processor-service
+  template:
+    metadata:
+      labels:
+        app: processor-service
+        environment: dev
+    spec:
+      containers:
+        - name: processor-service
+          image: interviewbuddy.azurecr.io/processor-service:latest
+          ports:
+            - containerPort: 3001
+              name: http
+          env:
+            - name: NODE_ENV
+              value: "development"
+            - name: PORT
+              value: "3001"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: processor-service
+  namespace: dev
+spec:
+  selector:
+    app: processor-service
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP
