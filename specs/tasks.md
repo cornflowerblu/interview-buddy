@@ -81,15 +81,16 @@ packages/
 
 **Note**: We use Azure managed services (PostgreSQL, Redis) from day 1 instead of running databases in Minikube. This matches our production architecture and costs ~$30/month for dev environment.
 
-- [ ] T020 Create Terraform project structure in infrastructure/terraform/ with main.tf, variables.tf, outputs.tf
-- [ ] T021 [P] Define Azure Resource Group in infrastructure/terraform/resource-group.tf for dev environment
-- [ ] T022 [P] Define Azure Database for PostgreSQL Flexible Server in infrastructure/terraform/postgres.tf (Burstable B1ms tier, ~$12/month)
-- [ ] T023 [P] Define Azure Cache for Redis in infrastructure/terraform/redis.tf (Basic C0 tier 250MB, ~$16/month)
-- [ ] T024 [P] Define Azure Video Indexer account in infrastructure/terraform/video-indexer.tf
-- [ ] T025 [P] Define Azure AI Foundry workspace in infrastructure/terraform/ai-foundry.tf
-- [ ] T026 Create Terraform outputs for connection strings in infrastructure/terraform/outputs.tf (postgres_url, redis_host, redis_port, video_indexer_key)
-- [ ] T027 Create terraform.tfvars.example with required variables (azure_subscription_id, resource_group_name, etc.)
-- [ ] T028 Configure Terraform Azure backend for state storage in infrastructure/terraform/backend.tf
+- [x] T020 Create Terraform project structure in infrastructure/terraform/ with main.tf, variables.tf, outputs.tf
+- [x] T021 [P] Define Azure Resource Group in infrastructure/terraform/resource-group.tf for dev environment
+- [x] T022 [P] Define Azure Database for PostgreSQL Flexible Server in infrastructure/terraform/postgres.tf (Burstable B1ms tier, ~$12/month)
+- [x] T023 [P] Define Azure Cache for Redis in infrastructure/terraform/redis.tf (Basic C0 tier 250MB, ~$16/month)
+- [x] T024 [P] Define Azure Video Indexer account in infrastructure/terraform/video-indexer.tf
+- [x] T025 [P] Define Azure AI Foundry workspace in infrastructure/terraform/ai-foundry.tf
+- [x] T026 Create Terraform outputs for connection strings in infrastructure/terraform/outputs.tf (postgres_url, redis_host, redis_port, video_indexer_key)
+- [x] T027 Create terraform.tfvars.example with required variables (azure_subscription_id, resource_group_name, etc.)
+- [x] T028 Configure Terraform Azure backend for state storage in infrastructure/terraform/backend.tf
+- [x] T_FLUX Register infrastructure in Flux (flux/infrastructure/terraform.yaml)
 - [ ] T029 Initialize and apply Terraform to create dev environment: cd infrastructure/terraform && terraform init && terraform apply
 - [ ] T030 Create script to export Terraform outputs to .env files: infrastructure/scripts/export-env.sh
 - [ ] T031 Run export script to populate .env.example files for all services with Azure connection strings

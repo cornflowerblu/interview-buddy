@@ -1,0 +1,4 @@
+subscription_id = "5917d543-47a8-4495-8c8a-150687984651"
+project_name    = "interview-buddy"
+environment     = "dev"
+location        = "eastus2"

@@ -1,0 +1,43 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  name: azure-infra
+  namespace: flux-system
+spec:
+  path: ./infrastructure/terraform
+  sourceRef:
+    kind: GitRepository
+    name: interview-buddy
+    namespace: flux-system
+  interval: 1h
+  retryInterval: 20s
+  approvePlan: "auto"
+  
+  # Write Terraform outputs to a Kubernetes Secret
+  writeOutputsToSecret:
+    name: azure-infra-outputs
+    outputs:
+    - postgres_host
+    - postgres_user
+    - postgres_password
+    - postgres_database
+    - redis_host
+    - redis_port
+    - redis_primary_access_key
+    - video_indexer_account_id
+    - ai_services_endpoint
+    - ai_services_key
+
+  # Configuration for the Azure Backend (State)
+  # Requires a Secret named 'azure-backend-config' with keys:
+  # resource_group_name, storage_account_name, container_name, key
+  backendConfig:
+    secretRef:
+      name: azure-backend-config
+
+  # Variables for Terraform
+  # Requires a Secret named 'azure-infra-vars' with keys:
+  # subscription_id, project_name, environment, location
+  varsFrom:
+  - kind: Secret
+    name: azure-infra-vars
