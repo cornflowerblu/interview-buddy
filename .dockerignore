@@ -1,10 +1,19 @@
 # ==============================================================================
-# .dockerignore for NestJS AI Analyzer Service (apps/ai-analyzer-service/)
+# Root .dockerignore for Interview Buddy Monorepo
 # ==============================================================================
-# Optimized for NestJS microservice with Bun runtime
+# This file applies when building Docker images from the repository root.
+# Each service also has its own .dockerignore for service-specific optimization.
 
 # ==============================================================================
-# Dependencies (reinstalled in Docker build)
+# Version Control
+# ==============================================================================
+.git
+.gitignore
+.gitattributes
+.github
+
+# ==============================================================================
+# Dependencies (reinstalled during build)
 # ==============================================================================
 node_modules
 **/node_modules
@@ -14,27 +23,27 @@ node_modules
 # ==============================================================================
 dist
 build
+.next
+**/.next
+**/dist
+**/build
 *.tsbuildinfo
+**/*.tsbuildinfo
 
 # ==============================================================================
 # Environment & Secrets (SECURITY: Never copy into container)
 # ==============================================================================
-# Services fetch secrets from Azure Key Vault at runtime via Managed Identity
 .env
 .env.local
+.env.*.local
 .env.development
 .env.production
 .env.test
+**/.env
+**/.env.*
 *.key
 *.pem
 secrets/
-
-# ==============================================================================
-# Version Control
-# ==============================================================================
-.git
-.gitignore
-.gitattributes
 
 # ==============================================================================
 # Logs & Temporary Files
@@ -44,21 +53,36 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 logs/
+**/logs/
 tmp/
 temp/
+*.tmp
 
 # ==============================================================================
-# Test Files (not needed in production)
+# Test & Coverage
 # ==============================================================================
-src/**/*.spec.ts
-src/**/*.test.ts
-src/**/__tests__
-test/
-e2e/
 coverage/
 .nyc_output/
+**/coverage/
+**/.nyc_output/
 test-results/
-jest.config.*
+**/__tests__
+**/test
+*.spec.ts
+*.test.ts
+*.spec.js
+*.test.js
+
+# ==============================================================================
+# Documentation (not needed in production containers)
+# ==============================================================================
+*.md
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+docs/
+**/docs/
 
 # ==============================================================================
 # IDE & Editor Files
@@ -68,40 +92,44 @@ jest.config.*
 .vs
 *.swp
 *.swo
+*.swn
 *~
+.project
+.classpath
+.settings
 .DS_Store
 Thumbs.db
 
 # ==============================================================================
-# Documentation
+# CI/CD & Infrastructure (not needed in containers)
 # ==============================================================================
-README.md
-*.md
-docs/
-
-# ==============================================================================
-# Configuration Files (not needed at runtime)
-# ==============================================================================
-.prettierrc
-.prettierignore
-.eslintrc*
-eslint.config.*
-tsconfig.json
-tsconfig.build.json
-nest-cli.json
-
-# ==============================================================================
-# Docker & CI/CD Files
-# ==============================================================================
-Dockerfile
-.dockerignore
-docker-compose*.yml
 .github/
+flux/
+manifests/
+scripts/
+Dockerfile
+**/Dockerfile
+.dockerignore
+**/.dockerignore
+docker-compose*.yml
 
 # ==============================================================================
-# Development Tools
+# Specification & Planning Documents
 # ==============================================================================
-.npmrc
-.yarnrc
-.editorconfig
-nodemon.json
+specs/
+.specify/
+.claude/
+CLAUDE.md
+ORCHESTRATION_GUIDE.md
+MONOREPO_SETUP_INDEX.md
+SECURITY_SUMMARY.md
+TASK_ASSIGNMENTS.md
+TASK_SUMMARY.md
+WORKFLOW_DIAGRAM.md
+
+# ==============================================================================
+# Lock Files (handled by build stages)
+# ==============================================================================
+# Keep package-lock.json and bun.lock for dependency integrity
+# .npm/
+# .yarn/
