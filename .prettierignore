@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+.next/
+out/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+
+# Lock files
+package-lock.json
+bun.lock
+yarn.lock
+pnpm-lock.yaml
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Generated files
+*.d.ts
+prisma/migrations/
+
+# CI/CD manifests
+flux/
+manifests/
+
+# IDE
+.vscode/
+.idea/
+
+# Markdown files in specs (large docs)
+specs/*.md
+CLAUDE.md
+README.md
