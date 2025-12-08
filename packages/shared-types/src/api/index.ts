@@ -1,13 +1,13 @@
 /**
  * API Contract Types for Interview Buddy
- * 
+ *
  * These types define the request/response contracts between the Next.js API Gateway
  * and the NestJS microservices, as well as between frontend and backend.
  */
 
 /**
  * Interview Upload Request
- * 
+ *
  * Sent from frontend to initiate a resumable upload session
  */
 export interface CreateUploadRequest {
@@ -24,7 +24,7 @@ export interface CreateUploadRequest {
 
 /**
  * Interview Upload Response
- * 
+ *
  * Returns upload URL and metadata for resumable upload
  */
 export interface CreateUploadResponse {
@@ -36,7 +36,7 @@ export interface CreateUploadResponse {
 
 /**
  * Upload Progress Update Request
- * 
+ *
  * Sent from upload-service to update interview status during upload
  */
 export interface UpdateUploadProgressRequest {
@@ -47,7 +47,7 @@ export interface UpdateUploadProgressRequest {
 
 /**
  * Interview Metadata Update Request
- * 
+ *
  * Allows users to update interview details after upload
  */
 export interface UpdateInterviewRequest {
@@ -61,13 +61,19 @@ export interface UpdateInterviewRequest {
 
 /**
  * Interview Status Response
- * 
+ *
  * Real-time status of an interview during processing
  */
 export interface InterviewStatusResponse {
   id: string;
   userId: string;
-  status: 'uploading' | 'uploaded' | 'transcribing' | 'analyzing' | 'completed' | 'failed';
+  status:
+    | 'uploading'
+    | 'uploaded'
+    | 'transcribing'
+    | 'analyzing'
+    | 'completed'
+    | 'failed';
   company: string;
   jobTitle: string;
   interviewType: string;
@@ -78,7 +84,7 @@ export interface InterviewStatusResponse {
 
 /**
  * Interview Details Response
- * 
+ *
  * Full interview details with all metadata
  */
 export interface InterviewDetailsResponse {
@@ -100,7 +106,7 @@ export interface InterviewDetailsResponse {
 
 /**
  * Transcription Response
- * 
+ *
  * Interview transcription with timestamps
  */
 export interface TranscriptionResponse {
@@ -114,7 +120,7 @@ export interface TranscriptionResponse {
 
 /**
  * Transcript Segment Response
- * 
+ *
  * Individual segment of transcription with timing
  */
 export interface TranscriptSegmentResponse {
@@ -125,7 +131,7 @@ export interface TranscriptSegmentResponse {
 
 /**
  * Analysis Response
- * 
+ *
  * AI-powered analysis results
  */
 export interface AnalysisResponse {
@@ -141,7 +147,7 @@ export interface AnalysisResponse {
 
 /**
  * Speech Metrics Response
- * 
+ *
  * Analysis of speaking patterns
  */
 export interface SpeechMetricsResponse {
@@ -161,7 +167,7 @@ export interface FillerWordResponse {
 
 /**
  * Content Metrics Response
- * 
+ *
  * Analysis of answer quality and structure
  */
 export interface ContentMetricsResponse {
@@ -180,7 +186,7 @@ export interface StarMethodResponse {
 
 /**
  * Sentiment Metrics Response
- * 
+ *
  * Analysis of emotional tone and confidence
  */
 export interface SentimentMetricsResponse {
@@ -200,7 +206,7 @@ export interface SentimentPointResponse {
 
 /**
  * Comparison Metrics Response
- * 
+ *
  * Comparison between prep session and actual interview
  */
 export interface ComparisonMetricsResponse {
@@ -222,13 +228,19 @@ export interface AnswerDeviationResponse {
 
 /**
  * List Interviews Request
- * 
+ *
  * Query parameters for listing user's interviews
  */
 export interface ListInterviewsRequest {
   page?: number;
   limit?: number;
-  status?: 'uploading' | 'uploaded' | 'transcribing' | 'analyzing' | 'completed' | 'failed';
+  status?:
+    | 'uploading'
+    | 'uploaded'
+    | 'transcribing'
+    | 'analyzing'
+    | 'completed'
+    | 'failed';
   company?: string;
   sortBy?: 'createdAt' | 'updatedAt' | 'company';
   sortOrder?: 'asc' | 'desc';
@@ -236,7 +248,7 @@ export interface ListInterviewsRequest {
 
 /**
  * List Interviews Response
- * 
+ *
  * Paginated list of interviews
  */
 export interface ListInterviewsResponse {
@@ -250,20 +262,21 @@ export interface ListInterviewsResponse {
 /**
  * Error Response
  * 
- * Standard error response format
+ * Standard error response format with correlation ID for distributed tracing
  */
 export interface ErrorResponse {
   error: string;
   message: string;
   statusCode: number;
   timestamp: string;
+  correlationId: string;
   path?: string;
   details?: Record<string, any>;
 }
 
 /**
  * Health Check Response
- * 
+ *
  * Service health status for monitoring
  */
 export interface HealthCheckResponse {
