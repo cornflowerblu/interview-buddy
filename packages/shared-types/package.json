@@ -29,11 +29,18 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
+    "clean": "rm -rf dist",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js,json}\""
   },
+  "keywords": [
+    "interview-buddy",
+    "typescript",
+    "types",
+    "shared"
+  ],
   "devDependencies": {
     "typescript": "^5.7.2"
   }

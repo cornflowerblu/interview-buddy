@@ -262,14 +262,14 @@ export interface ListInterviewsResponse {
 /**
  * Error Response
  * 
- * Standard error response format with correlation ID for distributed tracing
+ * Standard error response format with distributed tracing support
  */
 export interface ErrorResponse {
   error: string;
   message: string;
   statusCode: number;
   timestamp: string;
-  correlationId: string;
+  correlationId: string; // For distributed tracing across microservices
   path?: string;
   details?: Record<string, any>;
 }
