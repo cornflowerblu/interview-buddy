@@ -6,7 +6,7 @@
  */
 
 /**
- * Event emitted when an interview recording is successfully uploaded to Azure Blob Storage
+ * Event emitted when an interview recording is successfully uploaded to Azure Video Indexer
  * 
  * Consumed by: processor-service
  * Published by: upload-service
@@ -14,14 +14,17 @@
 export interface InterviewUploadedEvent {
   interviewId: string;
   userId: string;
-  blobUrl: string;
-  fileName: string;
-  fileSize: number;
-  uploadedAt: Date;
+  videoIndexerUrl: string; // Video Indexer video ID or SAS URL
+  metadata: {
+    company: string;
+    jobTitle: string;
+    interviewType: string;
+  };
+  timestamp: Date;
 }
 
 /**
- * Event emitted when Azure Media Services completes transcription of an interview
+ * Event emitted when Azure Video Indexer completes transcription of an interview
  * 
  * Consumed by: ai-analyzer-service
  * Published by: processor-service
@@ -30,10 +33,9 @@ export interface InterviewTranscribedEvent {
   interviewId: string;
   userId: string;
   transcriptionId: string;
-  transcription: string;
-  confidence: number;
-  duration: number;
-  transcribedAt: Date;
+  // Include raw Video Indexer insights for AI analyzer to use
+  videoIndexerInsights: any; // Keep flexible - Video Indexer schema may change
+  timestamp: Date;
 }
 
 /**
@@ -47,7 +49,7 @@ export interface AnalysisCompletedEvent {
   userId: string;
   analysisId: string;
   overallScore: number;
-  completedAt: Date;
+  timestamp: Date;
 }
 
 /**
@@ -61,7 +63,7 @@ export interface ProcessingFailedEvent {
   userId: string;
   stage: 'upload' | 'transcription' | 'analysis';
   error: string;
-  failedAt: Date;
+  timestamp: Date;
 }
 
 /**

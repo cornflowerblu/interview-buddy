@@ -1,12 +1,41 @@
 {
   "name": "@interview-buddy/shared-types",
   "version": "1.0.0",
+  "description": "Shared TypeScript type definitions for Interview Buddy microservices",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./events": {
+      "types": "./dist/events/index.d.ts",
+      "import": "./dist/events/index.js",
+      "require": "./dist/events/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js",
+      "require": "./dist/api/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
   },
+  "keywords": [
+    "interview-buddy",
+    "typescript",
+    "types",
+    "shared"
+  ],
   "devDependencies": {
     "typescript": "^5.7.2"
   }

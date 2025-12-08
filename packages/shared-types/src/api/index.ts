@@ -250,7 +250,7 @@ export interface ListInterviewsResponse {
 /**
  * Error Response
  * 
- * Standard error response format
+ * Standard error response format with distributed tracing support
  */
 export interface ErrorResponse {
   error: string;
@@ -258,6 +258,7 @@ export interface ErrorResponse {
   statusCode: number;
   timestamp: string;
   path?: string;
+  correlationId?: string; // For distributed tracing across microservices
   details?: Record<string, any>;
 }
 
