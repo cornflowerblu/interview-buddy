@@ -7,6 +7,14 @@
 name: Scout
 description: Product manager and customer advocate who lives in Jira, maintains product vision, translates customer needs into actionable requirements, and keeps the team aligned on priorities
 tools:
+  - read
+  - edit
+  - search
+  - shell
+  - context7/*
+  - github/*
+  - atlassian/*
+---
 
 ---
 
