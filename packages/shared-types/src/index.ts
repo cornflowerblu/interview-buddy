@@ -1,28 +1,8 @@
-// Event Types
-export interface InterviewUploadedEvent {
-  interviewId: string;
-  userId: string;
-  blobUrl: string;
-  fileName: string;
-  fileSize: number;
-  uploadedAt: Date;
-}
+// Export event types
+export * from './events';
 
-export interface InterviewTranscribedEvent {
-  interviewId: string;
-  userId: string;
-  transcriptionId: string;
-  transcription: string;
-  confidence: number;
-  duration: number;
-}
-
-export interface AnalysisCompletedEvent {
-  interviewId: string;
-  userId: string;
-  analysisId: string;
-  overallScore: number;
-}
+// Export API contract types
+export * from './api';
 
 // Interview Upload Status
 export type InterviewUploadStatus =
