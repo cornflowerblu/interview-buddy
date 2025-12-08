@@ -1,4 +1,6 @@
 {
+  // Note: This config can be refactored to extend a root tsconfig.json once T002 is complete
+  // Example: "extends": "../../tsconfig.json"
   "compilerOptions": {
     "target": "ES2022",
     "module": "commonjs",
