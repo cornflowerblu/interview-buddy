@@ -59,12 +59,12 @@ PHASE 2: Configuration (Parallel)
 
 ## ⏱️ Timeline Estimate
 
-| Phase | Tasks | Agents Involved | Duration | Can Start After |
-|-------|-------|-----------------|----------|-----------------|
-| Phase 1 | 1 | Nexus | ✅ Done | N/A |
-| Phase 2 | 4 | Prism, Forge | 2-4 hours | Phase 1 |
-| Phase 3 | 3 | Prism, Atlas | 2-4 hours | Phase 2 |
-| Phase 4 | 1 | Nexus | 1-2 hours | Phase 3 (T006) |
+| Phase   | Tasks | Agents Involved | Duration  | Can Start After |
+| ------- | ----- | --------------- | --------- | --------------- |
+| Phase 1 | 1     | Nexus           | ✅ Done   | N/A             |
+| Phase 2 | 4     | Prism, Forge    | 2-4 hours | Phase 1         |
+| Phase 3 | 3     | Prism, Atlas    | 2-4 hours | Phase 2         |
+| Phase 4 | 1     | Nexus           | 1-2 hours | Phase 3 (T006)  |
 
 **Total Wall-Clock Time:** 5-10 hours (with parallel execution)  
 **Total Working Time:** 1-2 days (accounting for reviews and coordination)
@@ -86,12 +86,14 @@ T003, T008 (can start anytime after T001)
 ## 📝 Quick Start Guide
 
 ### Option 1: Automated (Recommended)
+
 ```bash
 # Requires gh CLI with authentication
 bash scripts/create-monorepo-issues.sh
 ```
 
 ### Option 2: Manual
+
 1. Open [TASK_ASSIGNMENTS.md](./TASK_ASSIGNMENTS.md)
 2. Copy each issue section to GitHub Issues UI
 3. Assign to the appropriate agent
@@ -112,6 +114,7 @@ bash scripts/create-monorepo-issues.sh
 ## 🎯 Success Metrics
 
 ✅ **Technical Success:**
+
 - All workspaces compile with TypeScript
 - ESLint and Prettier run successfully
 - Jest configuration loads
@@ -119,6 +122,7 @@ bash scripts/create-monorepo-issues.sh
 - Docker builds optimize with .dockerignore
 
 ✅ **Process Success:**
+
 - All tasks assigned to appropriate agents
 - Dependencies respected in execution order
 - No blocking conflicts between agents

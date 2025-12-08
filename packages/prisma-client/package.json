@@ -8,7 +8,9 @@
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
-    "studio": "prisma studio"
+    "studio": "prisma studio",
+    "lint": "echo 'Prisma client has no TypeScript source to lint'",
+    "format": "prettier --write \"prisma/**/*.prisma\""
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"
