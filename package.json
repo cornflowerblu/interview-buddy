@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "bun run --filter './apps/*' dev",
     "build": "bun run --filter './apps/*' --filter './packages/*' build",
-    "test": "bun test",
+    "test": "bun run --filter './apps/*' test",
     "lint": "bun run --filter './apps/*' --filter './packages/*' lint"
   },
   "devDependencies": {
