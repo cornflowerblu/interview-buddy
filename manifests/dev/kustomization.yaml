@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: dev
 
 resources:
+  - namespace.yaml
   - upload-service-deployment.yaml
   - processor-service-deployment.yaml
   - ai-analyzer-service-deployment.yaml
