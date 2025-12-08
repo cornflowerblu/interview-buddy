@@ -9,11 +9,23 @@
   "scripts": {
     "dev": "bun run --filter './apps/*' dev",
     "build": "bun run --filter './apps/*' --filter './packages/*' build",
-    "test": "bun run --filter './apps/*' test",
-    "lint": "bun run --filter './apps/*' --filter './packages/*' lint"
+    "lint": "bun run --filter './apps/*' --filter './packages/*' lint",
+    "test": "jest",
+    "test:unit": "jest --testPathPatterns='.*\\.spec\\.ts$' --testPathIgnorePatterns='.*\\.e2e-spec\\.ts$' --testPathIgnorePatterns='.*\\.integration\\.spec\\.ts$'",
+    "test:integration": "jest --testPathPatterns='.*\\.integration\\.spec\\.ts$'",
+    "test:e2e": "jest --testPathPatterns='.*\\.e2e-spec\\.ts$'",
+    "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
+    "@jest/types": "^30.2.0",
+    "@types/jest": "^30.0.0",
     "@types/node": "^22.10.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   }
 }
