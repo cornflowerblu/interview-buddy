@@ -307,7 +307,6 @@ Set `DATABASE_URL` in your environment:
 DATABASE_URL="postgresql://user:password@localhost:5432/interview_buddy?schema=public"
 
 # Development (Docker Compose)
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/interview_buddy?schema=public"
 
 # Production (Azure PostgreSQL with SSL)
 DATABASE_URL="postgresql://user:password@prod-host:5432/interview_buddy?schema=public&sslmode=require"
