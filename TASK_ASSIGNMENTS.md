@@ -4,17 +4,17 @@ This document maps each monorepo setup task to the appropriate custom agent base
 
 ## Task Assignment Summary
 
-| Task | Agent | Rationale |
-|------|-------|-----------|
-| T001 | Nexus (Backend Engineer) | Monorepo structure and package management |
-| T002 | Prism (Frontend Engineer) | TypeScript configuration expertise |
-| T003 | Prism (Frontend Engineer) | Code quality tooling (ESLint/Prettier) |
-| T004 | Prism (Frontend Engineer) | Shared TypeScript types package |
-| T005 | Prism (Frontend Engineer) | Shared utilities package |
-| T006 | Atlas (Data Architect) | Database schema design with Prisma |
-| T007 | Nexus (Backend Engineer) | Prisma client tooling and backend integration |
-| T008 | Forge (DevOps Architect) | Docker configuration and containerization |
-| T009 | Prism (Frontend Engineer) | Testing infrastructure setup |
+| Task | Agent                     | Rationale                                     |
+| ---- | ------------------------- | --------------------------------------------- |
+| T001 | Nexus (Backend Engineer)  | Monorepo structure and package management     |
+| T002 | Prism (Frontend Engineer) | TypeScript configuration expertise            |
+| T003 | Prism (Frontend Engineer) | Code quality tooling (ESLint/Prettier)        |
+| T004 | Prism (Frontend Engineer) | Shared TypeScript types package               |
+| T005 | Prism (Frontend Engineer) | Shared utilities package                      |
+| T006 | Atlas (Data Architect)    | Database schema design with Prisma            |
+| T007 | Nexus (Backend Engineer)  | Prisma client tooling and backend integration |
+| T008 | Forge (DevOps Architect)  | Docker configuration and containerization     |
+| T009 | Prism (Frontend Engineer) | Testing infrastructure setup                  |
 
 ---
 
@@ -35,6 +35,7 @@ Set up the root-level `package.json` with proper workspace configuration to supp
 **Task:** T001 - Initialize monorepo package.json with workspaces for apps/ and packages/
 
 **Acceptance Criteria:**
+
 - ✅ Root package.json includes `workspaces: ["apps/*", "packages/*"]` (Already done)
 - ✅ Appropriate package manager configuration (Bun is being used)
 - ✅ Basic scripts for monorepo-wide commands (build, test, lint, dev) (Already done)
@@ -63,6 +64,7 @@ Create a root-level TypeScript configuration with strict mode enabled that will 
 **Task:** T002 - Setup TypeScript configuration with strict mode in root tsconfig.json
 
 **Acceptance Criteria:**
+
 - Root `tsconfig.json` with strict mode enabled
 - Proper compiler options for monorepo (composite projects, path mapping)
 - Base configuration that can be extended by services
@@ -92,6 +94,7 @@ Set up consistent code style and linting rules across the entire monorepo.
 **Task:** T003 - Configure ESLint and Prettier for monorepo in .eslintrc.js and .prettierrc
 
 **Acceptance Criteria:**
+
 - `.eslintrc.js` with monorepo-appropriate rules
 - Support for both TypeScript and JavaScript
 - Rules compatible with NestJS and Next.js
@@ -124,6 +127,7 @@ Create the shared-types package that will contain TypeScript interfaces and type
 **Task:** T004 - Create packages/shared-types/package.json with TypeScript setup
 
 **Acceptance Criteria:**
+
 - `packages/shared-types/package.json` created with proper configuration
 - `packages/shared-types/tsconfig.json` extending root config
 - Basic directory structure (src/, dist/)
@@ -158,6 +162,7 @@ Create the shared-utils package for common utility functions used across service
 **Task:** T005 - Create packages/shared-utils/package.json with utility structure
 
 **Acceptance Criteria:**
+
 - `packages/shared-utils/package.json` created
 - `packages/shared-utils/tsconfig.json` extending root config
 - Directory structure for utility categories (validation, formatting, date-utils, etc.)
@@ -189,6 +194,7 @@ Design and implement the initial Prisma schema with core database entities for t
 **Task:** T006 - Create packages/prisma-client/prisma/schema.prisma with base entities
 
 **Acceptance Criteria:**
+
 - `packages/prisma-client/prisma/schema.prisma` created
 - PostgreSQL as the database provider
 - User reference entity (for Firebase Auth integration - stores userId from Firebase)
@@ -217,6 +223,7 @@ Atlas is the data architect with deep expertise in PostgreSQL, Prisma, and data 
 
 **Context:**
 Refer to:
+
 - CLAUDE.md for architecture overview
 - specs/data-model.md for detailed requirements (if it exists)
 - Privacy requirement: users never access raw recordings, only structured data
@@ -239,6 +246,7 @@ Configure the prisma-client package for proper client generation and consumption
 **Task:** T007 - Setup Prisma client generation in packages/prisma-client/package.json
 
 **Acceptance Criteria:**
+
 - `packages/prisma-client/package.json` with Prisma dependencies
   - `@prisma/client`
   - `prisma` as devDependency
@@ -261,6 +269,7 @@ Backend engineers work closely with Prisma client in NestJS services and underst
 
 **Context:**
 This package will be imported by all backend services:
+
 - `upload-service`
 - `processor-service`
 - `ai-analyzer-service`
@@ -284,6 +293,7 @@ Create appropriate `.dockerignore` files to optimize Docker builds and prevent u
 **Task:** T008 - Configure Docker ignore files (.dockerignore) for all services
 
 **Acceptance Criteria:**
+
 - `.dockerignore` in repository root for multi-stage builds
 - `.dockerignore` in each service directory:
   - `apps/web/`
@@ -309,6 +319,7 @@ Create appropriate `.dockerignore` files to optimize Docker builds and prevent u
 DevOps architects have deep expertise in Docker optimization and understand what should/shouldn't be in containers for both security and performance.
 
 **Context:**
+
 - Each service will be containerized for Kubernetes deployment (AKS)
 - Proper ignore files are crucial for:
   - Security (don't copy secrets or git history)
@@ -334,6 +345,7 @@ Configure Jest for running tests across the monorepo with proper workspace suppo
 **Task:** T009 - Setup Jest configuration for monorepo testing in jest.config.js
 
 **Acceptance Criteria:**
+
 - Root `jest.config.js` with monorepo configuration
 - Project-based configuration for different types of services:
   - NestJS backend services (use `@nestjs/testing`)
@@ -361,6 +373,7 @@ Frontend engineers often set up test infrastructure and understand the needs of 
 
 **Context:**
 From CLAUDE.md, the testing strategy includes:
+
 - **Unit Tests**: Business logic with mocked dependencies (>70% coverage target)
 - **Integration Tests**: Redis event flows, Prisma operations
 - **E2E Tests**: Critical path through upload → transcription → analysis
@@ -409,20 +422,13 @@ T008 (Forge)
 ## Recommended Order
 
 **Phase 1 (Foundation):**
+
 1. T001 - Monorepo package.json (Nexus) ✅ Already done
 
-**Phase 2 (Configuration - Parallel):**
-2. T002 - TypeScript config (Prism)
-3. T003 - ESLint/Prettier (Prism)
-4. T008 - Docker ignore files (Forge)
-5. T009 - Jest config (Prism)
+**Phase 2 (Configuration - Parallel):** 2. T002 - TypeScript config (Prism) 3. T003 - ESLint/Prettier (Prism) 4. T008 - Docker ignore files (Forge) 5. T009 - Jest config (Prism)
 
-**Phase 3 (Shared Packages - Parallel):**
-6. T004 - shared-types (Prism)
-7. T005 - shared-utils (Prism)
-8. T006 - Prisma schema (Atlas)
+**Phase 3 (Shared Packages - Parallel):** 6. T004 - shared-types (Prism) 7. T005 - shared-utils (Prism) 8. T006 - Prisma schema (Atlas)
 
-**Phase 4 (Prisma Client):**
-9. T007 - Prisma client generation (Nexus) - Depends on T006
+**Phase 4 (Prisma Client):** 9. T007 - Prisma client generation (Nexus) - Depends on T006
 
 Total estimated time: 1-2 days with agents working in parallel.

@@ -1,15 +1,12 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
+    "composite": true,
     "module": "commonjs",
-    "declaration": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "baseUrl": "."
   },
-  "include": ["index.ts"],
-  "exclude": ["node_modules", "dist", "prisma/migrations"]
+  "include": ["index.ts", "prisma/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }
