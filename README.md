@@ -48,6 +48,7 @@ Users **never see or download** their original recordings - only structured anal
 | Document | Purpose | Audience |
 |----------|---------|----------|
 | **[CLAUDE.md](./CLAUDE.md)** | Project standards, decision-making framework, architecture context | All team members |
+| **[LINTING_AND_FORMATTING.md](./LINTING_AND_FORMATTING.md)** | ESLint and Prettier configuration, code quality standards | All developers |
 | **[specs/spec.md](./specs/spec.md)** | Complete feature specification with user stories (P1, P2, P3) | Product, Backend, Frontend |
 | **[specs/plan.md](./specs/plan.md)** | Implementation plan, technical approach, architecture decisions | Backend, DevOps, Orchestrator |
 | **[specs/research.md](./specs/research.md)** | Research findings and technology decisions | Backend, DevOps |
@@ -464,7 +465,11 @@ npx prisma migrate dev
 
 # 5. Configure environment variables (see specs/quickstart.md)
 
-# 6. Run services locally (separate terminals)
+# 6. Run linting and formatting (ensure code quality)
+npm run lint        # Check for linting issues
+npm run format      # Auto-format all code
+
+# 7. Run services locally (separate terminals)
 cd apps/web && npm run dev
 cd apps/upload-service && npm run start:dev
 cd apps/processor-service && npm run start:dev
@@ -472,6 +477,7 @@ cd apps/ai-analyzer-service && npm run start:dev
 ```
 
 **Full setup guide**: See [specs/quickstart.md](./specs/quickstart.md)
+**Linting & Formatting guide**: See [LINTING_AND_FORMATTING.md](./LINTING_AND_FORMATTING.md)
 
 ---
 
