@@ -79,7 +79,7 @@ PRISM (Frontend Engineer)
    └─ T005: shared-utils (2-3h) [P]
 
 Total: 10-18 hours across 5 tasks
-Strategy: Focus on T002 first (blocks Phase 3), 
+Strategy: Focus on T002 first (blocks Phase 3),
           then T003 & T009 in parallel
 
 
@@ -90,7 +90,7 @@ NEXUS (Backend Engineer)
    └─ T007: Prisma client (1-2h)
 
 Total: 1-2 hours (T001 already complete)
-Strategy: Wait for Atlas to complete T006, 
+Strategy: Wait for Atlas to complete T006,
           then quickly set up T007
 
 
@@ -117,7 +117,7 @@ Strategy: Can start immediately (no dependencies)
 CRITICAL PATH (longest dependency chain):
 T001 (✅) → T002 (Prism) → T006 (Atlas) → T007 (Nexus)
            2-4h            3-4h            1-2h
-           
+
 Total Critical Path: 6-10 hours
 
 OTHER PATHS (can run in parallel):
@@ -210,14 +210,17 @@ RISK 3: Configuration Conflicts
 ---
 
 **Legend:**
+
 - `[P]` = Priority task (marked in original list)
 - `✅` = Already complete
 - `[Agent]` = Assigned custom agent
 - `h` = hours estimated
 
 **Critical Dependencies:**
+
 - T002 blocks: T004, T005, T006
 - T006 blocks: T007
 
 **No Dependencies (can start anytime):**
+
 - T003, T008, T009 (can start after T001)

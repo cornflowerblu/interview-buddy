@@ -1,6 +1,6 @@
 /**
  * Logging Utilities for Interview Buddy
- * 
+ *
  * Provides structured logging with context, correlation IDs, and distributed tracing support.
  * Designed for use across all microservices with consistent log format.
  */
@@ -13,7 +13,7 @@ export enum LogLevel {
   INFO = 'info',
   WARN = 'warn',
   ERROR = 'error',
-  FATAL = 'fatal'
+  FATAL = 'fatal',
 }
 
 /**
@@ -73,9 +73,10 @@ export class Logger {
 
   constructor(config: LoggerConfig) {
     this.serviceName = config.serviceName;
-    this.environment = config.environment || process.env.NODE_ENV || 'development';
+    this.environment =
+      config.environment || process.env.NODE_ENV || 'development';
     this.minLevel = config.minLevel || LogLevel.INFO;
-    this.prettyPrint = config.prettyPrint ?? (this.environment === 'development');
+    this.prettyPrint = config.prettyPrint ?? this.environment === 'development';
     this.context = {};
   }
 
@@ -101,7 +102,7 @@ export class Logger {
       serviceName: this.serviceName,
       environment: this.environment,
       minLevel: this.minLevel,
-      prettyPrint: this.prettyPrint
+      prettyPrint: this.prettyPrint,
     });
     childLogger.setContext({ ...this.context, ...context });
     return childLogger;
@@ -151,7 +152,7 @@ export class Logger {
     level: LogLevel,
     message: string,
     additionalContext?: Partial<LogContext>,
-    error?: ErrorDetails
+    error?: ErrorDetails,
   ): void {
     if (!this.shouldLog(level)) {
       return;
@@ -165,9 +166,9 @@ export class Logger {
         service: this.serviceName,
         environment: this.environment,
         ...this.context,
-        ...additionalContext
+        ...additionalContext,
       },
-      ...(error && { error })
+      ...(error && { error }),
     };
 
     if (this.prettyPrint) {
@@ -181,7 +182,13 @@ export class Logger {
    * Check if log level should be logged based on min level
    */
   private shouldLog(level: LogLevel): boolean {
-    const levels = [LogLevel.DEBUG, LogLevel.INFO, LogLevel.WARN, LogLevel.ERROR, LogLevel.FATAL];
+    const levels = [
+      LogLevel.DEBUG,
+      LogLevel.INFO,
+      LogLevel.WARN,
+      LogLevel.ERROR,
+      LogLevel.FATAL,
+    ];
     const currentLevelIndex = levels.indexOf(level);
     const minLevelIndex = levels.indexOf(this.minLevel);
     return currentLevelIndex >= minLevelIndex;
@@ -195,7 +202,7 @@ export class Logger {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      ...(error as any).code && { code: (error as any).code }
+      ...((error as any).code && { code: (error as any).code }),
     };
   }
 
@@ -204,18 +211,18 @@ export class Logger {
    */
   private prettyPrintLog(entry: LogEntry): void {
     const levelColors: Record<LogLevel, string> = {
-      [LogLevel.DEBUG]: '\x1b[36m',   // Cyan
-      [LogLevel.INFO]: '\x1b[32m',    // Green
-      [LogLevel.WARN]: '\x1b[33m',    // Yellow
-      [LogLevel.ERROR]: '\x1b[31m',   // Red
-      [LogLevel.FATAL]: '\x1b[35m'    // Magenta
+      [LogLevel.DEBUG]: '\x1b[36m', // Cyan
+      [LogLevel.INFO]: '\x1b[32m', // Green
+      [LogLevel.WARN]: '\x1b[33m', // Yellow
+      [LogLevel.ERROR]: '\x1b[31m', // Red
+      [LogLevel.FATAL]: '\x1b[35m', // Magenta
     };
     const reset = '\x1b[0m';
     const color = levelColors[entry.level];
 
     console.log(
       `${color}[${entry.timestamp}] [${entry.level.toUpperCase()}] [${entry.context.service}]${reset}`,
-      entry.message
+      entry.message,
     );
 
     if (Object.keys(entry.context).length > 2) {
@@ -245,8 +252,11 @@ export function generateCorrelationId(): string {
 /**
  * Extract correlation ID from request headers
  */
-export function extractCorrelationId(headers: Record<string, string | string[] | undefined>): string | undefined {
-  const correlationId = headers['x-correlation-id'] || headers['X-Correlation-ID'];
+export function extractCorrelationId(
+  headers: Record<string, string | string[] | undefined>,
+): string | undefined {
+  const correlationId =
+    headers['x-correlation-id'] || headers['X-Correlation-ID'];
   if (Array.isArray(correlationId)) {
     return correlationId[0];
   }
@@ -271,7 +281,9 @@ export function configureDefaultLogger(config: LoggerConfig): void {
  */
 export function getDefaultLogger(): Logger {
   if (!defaultLoggerInstance) {
-    throw new Error('Default logger not configured. Call configureDefaultLogger() first.');
+    throw new Error(
+      'Default logger not configured. Call configureDefaultLogger() first.',
+    );
   }
   return defaultLoggerInstance;
 }
@@ -280,14 +292,14 @@ export function getDefaultLogger(): Logger {
  * Convenience functions using default logger
  */
 export const log = {
-  debug: (message: string, context?: Partial<LogContext>) => 
+  debug: (message: string, context?: Partial<LogContext>) =>
     getDefaultLogger().debug(message, context),
-  info: (message: string, context?: Partial<LogContext>) => 
+  info: (message: string, context?: Partial<LogContext>) =>
     getDefaultLogger().info(message, context),
-  warn: (message: string, context?: Partial<LogContext>) => 
+  warn: (message: string, context?: Partial<LogContext>) =>
     getDefaultLogger().warn(message, context),
-  error: (message: string, error?: Error, context?: Partial<LogContext>) => 
+  error: (message: string, error?: Error, context?: Partial<LogContext>) =>
     getDefaultLogger().error(message, error, context),
-  fatal: (message: string, error?: Error, context?: Partial<LogContext>) => 
-    getDefaultLogger().fatal(message, error, context)
+  fatal: (message: string, error?: Error, context?: Partial<LogContext>) =>
+    getDefaultLogger().fatal(message, error, context),
 };
