@@ -35,10 +35,6 @@ provider "azapi" {
 
 data "azurerm_client_config" "current" {}
 
-resource "random_pet" "prefix" {
-  prefix = "ib"
-  length = 1
-}
 
 resource "random_string" "suffix" {
   length  = 6

@@ -13,7 +13,7 @@ resource "azurerm_role_assignment" "vi_storage_contributor" {
 }
 
 resource "azurerm_video_indexer_account" "vi" {
-  name                = "vi-${local.resource_name_prefix}"
+  name                = "vi-ib-${var.environment}-${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   storage_account_id  = azurerm_storage_account.sa.id

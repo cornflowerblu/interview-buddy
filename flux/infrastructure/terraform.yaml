@@ -11,7 +11,7 @@ spec:
     namespace: flux-system
   interval: 1h
   retryInterval: 20s
-  approvePlan: "auto"
+  approvePlan: "manual"
   
   # Write Terraform outputs to a Kubernetes Secret
   writeOutputsToSecret:

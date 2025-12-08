@@ -16,6 +16,31 @@ resource "azurerm_postgresql_flexible_server" "postgres" {
   sku_name               = var.postgres_sku_name
   zone                   = "1"
 
+  # Enforce SSL/TLS for all connections
+  configuration {
+    name  = "require_secure_transport"
+    value = "ON"
+  }
+
+  # Customer-managed key encryption (replace with actual key details)
+  customer_managed_key {
+    key_vault_key_id          = var.postgres_cm_key_id # e.g., "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.KeyVault/vaults/xxx/keys/xxx"
+    key_vault_user_identity_id = var.postgres_cm_key_user_identity_id # e.g., "/subscriptions/xxx/resourceGroups/xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/xxx"
+  }
+
+  # Enable Azure AD authentication
+  authentication {
+    active_directory_auth_enabled = true
+    password_auth_enabled         = true
+  }
+
+  # Backup configuration
+  backup_retention_days = 7
+
+  # High availability (recommended for production)
+  high_availability {
+    mode = "ZoneRedundant"
+  }
   tags = local.tags
 }
 
