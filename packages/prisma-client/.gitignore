@@ -1,0 +1,9 @@
+# Prisma
+node_modules
+.env
+*.db
+*.db-journal
+
+# Generated files
+index.js
+index.d.ts
