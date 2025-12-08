@@ -1,16 +1,10 @@
 {
-  // Note: This config can be refactored to extend a root tsconfig.json once T002 is complete
-  // Example: "extends": "../../tsconfig.json"
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
+    "composite": true,
     "module": "commonjs",
-    "declaration": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "rootDir": "./src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

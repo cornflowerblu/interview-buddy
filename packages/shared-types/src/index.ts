@@ -4,17 +4,27 @@ export * from './events';
 // Export API contract types
 export * from './api';
 
+// User Entity (managed by Firebase Authentication)
+export interface User {
+  id: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Interview Upload Status
 export type InterviewUploadStatus =
-  | "uploading"
-  | "uploaded"
-  | "transcribing"
-  | "analyzing"
-  | "completed"
-  | "failed";
+  | 'uploading'
+  | 'uploaded'
+  | 'transcribing'
+  | 'analyzing'
+  | 'completed'
+  | 'failed';
 
 // Interview Type
-export type InterviewType = "behavioral" | "technical" | "phone" | "panel";
+export type InterviewType = 'behavioral' | 'technical' | 'phone' | 'panel';
 
 // Interview Entity (aligned with Prisma schema)
 export interface Interview {

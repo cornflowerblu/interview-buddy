@@ -1,6 +1,6 @@
 /**
  * Event Payload Types for Interview Buddy
- * 
+ *
  * These events are published to Redis Streams and consumed by microservices
  * to orchestrate the interview processing pipeline.
  */
@@ -40,7 +40,7 @@ export interface InterviewTranscribedEvent {
 
 /**
  * Event emitted when AI analysis of an interview is completed
- * 
+ *
  * Consumed by: notification-service, web (via WebSocket/SSE)
  * Published by: ai-analyzer-service
  */
@@ -54,7 +54,7 @@ export interface AnalysisCompletedEvent {
 
 /**
  * Event emitted when processing fails at any stage
- * 
+ *
  * Consumed by: notification-service, web (via WebSocket/SSE)
  * Published by: any service
  */
@@ -69,9 +69,9 @@ export interface ProcessingFailedEvent {
 /**
  * Union type of all event types for type-safe event handling
  */
-export type InterviewEvent = 
-  | InterviewUploadedEvent 
-  | InterviewTranscribedEvent 
+export type InterviewEvent =
+  | InterviewUploadedEvent
+  | InterviewTranscribedEvent
   | AnalysisCompletedEvent
   | ProcessingFailedEvent;
 
@@ -85,4 +85,4 @@ export const EventNames = {
   PROCESSING_FAILED: 'processing.failed',
 } as const;
 
-export type EventName = typeof EventNames[keyof typeof EventNames];
+export type EventName = (typeof EventNames)[keyof typeof EventNames];

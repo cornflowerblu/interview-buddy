@@ -18,16 +18,20 @@ export default function DesignDemo() {
             Primary Colors (Trust Blue)
           </h2>
           <div className="grid grid-cols-6 md:grid-cols-11 gap-2">
-            {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((shade) => (
-              <div key={shade} className="space-y-2">
-                <div
-                  className={`h-20 rounded-lg bg-primary-${shade} border border-neutral-200 dark:border-neutral-700`}
-                />
-                <div className="text-xs text-center">
-                  <div className="font-mono text-neutral-700 dark:text-neutral-300">{shade}</div>
+            {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map(
+              (shade) => (
+                <div key={shade} className="space-y-2">
+                  <div
+                    className={`h-20 rounded-lg bg-primary-${shade} border border-neutral-200 dark:border-neutral-700`}
+                  />
+                  <div className="text-xs text-center">
+                    <div className="font-mono text-neutral-700 dark:text-neutral-300">
+                      {shade}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </section>
 
@@ -37,16 +41,20 @@ export default function DesignDemo() {
             Neutral Colors
           </h2>
           <div className="grid grid-cols-6 md:grid-cols-11 gap-2">
-            {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map((shade) => (
-              <div key={shade} className="space-y-2">
-                <div
-                  className={`h-20 rounded-lg bg-neutral-${shade} border border-neutral-200 dark:border-neutral-700`}
-                />
-                <div className="text-xs text-center">
-                  <div className="font-mono text-neutral-700 dark:text-neutral-300">{shade}</div>
+            {[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950].map(
+              (shade) => (
+                <div key={shade} className="space-y-2">
+                  <div
+                    className={`h-20 rounded-lg bg-neutral-${shade} border border-neutral-200 dark:border-neutral-700`}
+                  />
+                  <div className="text-xs text-center">
+                    <div className="font-mono text-neutral-700 dark:text-neutral-300">
+                      {shade}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ),
+            )}
           </div>
         </section>
 
@@ -111,7 +119,7 @@ export default function DesignDemo() {
           <h2 className="text-2xl font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
             Component Examples
           </h2>
-          
+
           {/* Status Badges */}
           <div className="space-y-4">
             <h3 className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
@@ -183,8 +191,12 @@ export default function DesignDemo() {
               {/* Score */}
               <div className="mb-4">
                 <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-neutral-600 dark:text-neutral-400">Overall Score</span>
-                  <span className="font-semibold text-neutral-900 dark:text-neutral-50">78/100</span>
+                  <span className="text-neutral-600 dark:text-neutral-400">
+                    Overall Score
+                  </span>
+                  <span className="font-semibold text-neutral-900 dark:text-neutral-50">
+                    78/100
+                  </span>
                 </div>
                 <div className="w-full h-2 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden">
                   <div
@@ -223,7 +235,8 @@ export default function DesignDemo() {
               Emphasized Body (xl)
             </p>
             <p className="text-base text-neutral-700 dark:text-neutral-300">
-              Body Text (base) - This is the default text size for content. It should be easy to read and comfortable for long-form text.
+              Body Text (base) - This is the default text size for content. It
+              should be easy to read and comfortable for long-form text.
             </p>
             <p className="text-sm text-neutral-600 dark:text-neutral-400">
               Secondary Text (sm) - Used for labels, captions, and helper text.
@@ -251,7 +264,9 @@ export default function DesignDemo() {
                 </span>
               </div>
               <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-400">
-                <button className="hover:text-neutral-900 dark:hover:text-neutral-100">⏸</button>
+                <button className="hover:text-neutral-900 dark:hover:text-neutral-100">
+                  ⏸
+                </button>
                 <button className="hover:text-error-500">⏹</button>
               </div>
             </div>
@@ -264,7 +279,8 @@ export default function DesignDemo() {
         {/* Dark Mode Toggle Hint */}
         <section className="bg-neutral-100 dark:bg-neutral-900 rounded-lg p-6 text-center">
           <p className="text-sm text-neutral-600 dark:text-neutral-400">
-            💡 Toggle your system dark mode to see the color palette adapt automatically
+            💡 Toggle your system dark mode to see the color palette adapt
+            automatically
           </p>
         </section>
       </div>

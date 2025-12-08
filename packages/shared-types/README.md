@@ -110,6 +110,7 @@ Use these types for database entities and business logic. These align with the P
 
 ```typescript
 import {
+  User,
   Interview,
   Transcription,
   Analysis,

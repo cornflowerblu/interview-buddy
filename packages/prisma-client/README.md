@@ -47,16 +47,127 @@ Stores pre-interview preparation sessions with AI coaching.
   - `questions`: AI-generated questions with metadata
   - `practiceAnswers`: User answers with AI feedback
 
-## Usage
+## Consuming the Client
+
+### Installation in Services
+
+The package is automatically available to all workspace members via the monorepo structure. No additional installation needed.
 
 ### In NestJS Services
 
+#### 1. Create a Prisma Module
+
 ```typescript
+// src/prisma/prisma.module.ts
+import { Module, Global } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+
+@Global()
+@Module({
+  providers: [PrismaService],
+  exports: [PrismaService],
+})
+export class PrismaModule {}
+```
+
+#### 2. Create a Prisma Service
+
+```typescript
+// src/prisma/prisma.service.ts
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@interview-buddy/prisma-client';
 
-const prisma = new PrismaClient();
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
+  async onModuleInit() {
+    await this.$connect();
+  }
 
-// Create an interview
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+}
+```
+
+#### 3. Use in Services
+
+```typescript
+// src/interview/interview.service.ts
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class InterviewService {
+  constructor(private prisma: PrismaService) {}
+
+  async create(userId: string, data: CreateInterviewDto) {
+    return this.prisma.interview.create({
+      data: {
+        userId,
+        company: data.company,
+        jobTitle: data.jobTitle,
+        interviewType: data.interviewType,
+        status: 'uploading',
+      },
+    });
+  }
+
+  async updateStatus(id: string, status: string) {
+    return this.prisma.interview.update({
+      where: { id },
+      data: { status },
+    });
+  }
+}
+```
+
+### In Next.js (Web App)
+
+#### 1. Create a Singleton Instance
+
+```typescript
+// lib/prisma.ts
+import { PrismaClient } from '@interview-buddy/prisma-client';
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient();
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+}
+```
+
+#### 2. Use in API Routes
+
+```typescript
+// app/api/interviews/route.ts
+import { prisma } from '@/lib/prisma';
+
+export async function GET(request: Request) {
+  const userId = 'user-123'; // From session
+
+  const interviews = await prisma.interview.findMany({
+    where: { userId },
+    include: {
+      transcription: true,
+      analysis: true,
+      prepSession: true,
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return Response.json({ interviews });
+}
+```
+
+## Usage Examples
+
+### Create an Interview
+
+```typescript
 const interview = await prisma.interview.create({
   data: {
     userId: 'user-123',
@@ -66,14 +177,11 @@ const interview = await prisma.interview.create({
     status: 'uploading',
   },
 });
+```
 
-// Update interview status
-await prisma.interview.update({
-  where: { id: interview.id },
-  data: { status: 'transcribing' },
-});
+### Create a Transcription
 
-// Create transcription
+```typescript
 await prisma.transcription.create({
   data: {
     interviewId: interview.id,
@@ -84,66 +192,131 @@ await prisma.transcription.create({
     speakers: [
       { id: 1, name: 'Candidate', instances: [{ start: '00:00:00', end: '00:00:05' }] }
     ],
+    language: 'en-US',
+    confidence: 0.95,
   },
 });
 ```
 
-### In Next.js (Web App)
+### Query with Relations
 
 ```typescript
-import { PrismaClient } from '@interview-buddy/prisma-client';
-
-const prisma = new PrismaClient();
-
-// Get user's interviews
-const interviews = await prisma.interview.findMany({
-  where: { userId: session.userId },
+const interview = await prisma.interview.findUnique({
+  where: { id: 'interview-id' },
   include: {
     transcription: true,
     analysis: true,
     prepSession: true,
   },
-  orderBy: { createdAt: 'desc' },
 });
 ```
 
 ## Development
 
-### Generate Prisma Client
+### Initial Setup
+
+After cloning the repository, set up the Prisma client:
+
+```bash
+# Install dependencies
+npm install
+
+# Generate Prisma Client
+npm run generate
+
+# Build TypeScript exports
+npm run build
+```
+
+### Database Operations
+
+#### Generate Prisma Client
+
+Regenerates the Prisma Client based on the schema:
 
 ```bash
 npm run generate
 ```
 
-### Create Migration
+Run this after any schema changes.
+
+#### Create and Apply Migration (Development)
+
+Creates a new migration and applies it to the database:
 
 ```bash
 npm run migrate:dev -- --name migration_name
 ```
 
-### Apply Migrations (Production)
+This command:
+1. Creates a new migration file in `prisma/migrations/`
+2. Applies the migration to your development database
+3. Regenerates the Prisma Client
+
+**Example:**
+```bash
+npm run migrate:dev -- --name add_prep_session_notes
+```
+
+#### Apply Migrations (Production)
+
+Applies pending migrations to the database without creating new ones:
 
 ```bash
 npm run migrate:deploy
 ```
 
-### Open Prisma Studio
+Use this in CI/CD pipelines and production environments.
+
+#### Push Schema Changes (Prototyping)
+
+Pushes schema changes directly to the database without creating migrations:
+
+```bash
+npm run db:push
+```
+
+**Warning:** Use only during early prototyping. Prefer migrations for production-ready features.
+
+#### Open Prisma Studio
+
+Opens a visual database browser:
 
 ```bash
 npm run studio
 ```
+
+Access at `http://localhost:5555`
+
+### Building the Package
+
+Compile TypeScript to JavaScript for consumption by services:
+
+```bash
+npm run build
+```
+
+This creates `dist/index.js` and `dist/index.d.ts`.
 
 ## Environment Variables
 
 Set `DATABASE_URL` in your environment:
 
 ```bash
-# Development
+# Development (local PostgreSQL)
 DATABASE_URL="postgresql://user:password@localhost:5432/interview_buddy?schema=public"
 
-# Production (Neon/Azure)
+
+# Production (Azure PostgreSQL with SSL)
 DATABASE_URL="postgresql://user:password@prod-host:5432/interview_buddy?schema=public&sslmode=require"
+
+# Production (Neon Serverless)
+DATABASE_URL="postgresql://user:password@ep-xxx.neon.tech/interview_buddy?sslmode=require"
 ```
+
+### Azure Key Vault Integration (Production)
+
+In production, services fetch `DATABASE_URL` from Azure Key Vault at runtime using Managed Identity. Never commit connection strings to `.env` files.
 
 ## Design Principles
 

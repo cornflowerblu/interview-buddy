@@ -1,6 +1,6 @@
 /**
  * Error Handling Utilities for Interview Buddy
- * 
+ *
  * Provides custom error classes, error formatters, and HTTP exception helpers
  * for consistent error handling across all microservices.
  */
@@ -19,7 +19,7 @@ export class ApplicationError extends Error {
     code: string,
     statusCode: number = 500,
     isOperational: boolean = true,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -46,7 +46,10 @@ export class ValidationError extends ApplicationError {
  * Authentication error - for authentication failures
  */
 export class AuthenticationError extends ApplicationError {
-  constructor(message: string = 'Authentication failed', context?: Record<string, any>) {
+  constructor(
+    message: string = 'Authentication failed',
+    context?: Record<string, any>,
+  ) {
     super(message, 'AUTHENTICATION_ERROR', 401, true, context);
   }
 }
@@ -55,7 +58,10 @@ export class AuthenticationError extends ApplicationError {
  * Authorization error - for insufficient permissions
  */
 export class AuthorizationError extends ApplicationError {
-  constructor(message: string = 'Insufficient permissions', context?: Record<string, any>) {
+  constructor(
+    message: string = 'Insufficient permissions',
+    context?: Record<string, any>,
+  ) {
     super(message, 'AUTHORIZATION_ERROR', 403, true, context);
   }
 }
@@ -64,8 +70,12 @@ export class AuthorizationError extends ApplicationError {
  * Not found error - for missing resources
  */
 export class NotFoundError extends ApplicationError {
-  constructor(resource: string, identifier?: string, context?: Record<string, any>) {
-    const message = identifier 
+  constructor(
+    resource: string,
+    identifier?: string,
+    context?: Record<string, any>,
+  ) {
+    const message = identifier
       ? `${resource} with identifier '${identifier}' not found`
       : `${resource} not found`;
     super(message, 'NOT_FOUND', 404, true, context);
@@ -85,7 +95,10 @@ export class ConflictError extends ApplicationError {
  * Rate limit error - for too many requests
  */
 export class RateLimitError extends ApplicationError {
-  constructor(message: string = 'Too many requests', context?: Record<string, any>) {
+  constructor(
+    message: string = 'Too many requests',
+    context?: Record<string, any>,
+  ) {
     super(message, 'RATE_LIMIT_EXCEEDED', 429, true, context);
   }
 }
@@ -94,7 +107,10 @@ export class RateLimitError extends ApplicationError {
  * Internal server error - for unexpected errors
  */
 export class InternalServerError extends ApplicationError {
-  constructor(message: string = 'An unexpected error occurred', context?: Record<string, any>) {
+  constructor(
+    message: string = 'An unexpected error occurred',
+    context?: Record<string, any>,
+  ) {
     super(message, 'INTERNAL_SERVER_ERROR', 500, false, context);
   }
 }
@@ -104,7 +120,13 @@ export class InternalServerError extends ApplicationError {
  */
 export class ServiceUnavailableError extends ApplicationError {
   constructor(service: string, context?: Record<string, any>) {
-    super(`Service '${service}' is unavailable`, 'SERVICE_UNAVAILABLE', 503, true, context);
+    super(
+      `Service '${service}' is unavailable`,
+      'SERVICE_UNAVAILABLE',
+      503,
+      true,
+      context,
+    );
   }
 }
 
@@ -112,12 +134,16 @@ export class ServiceUnavailableError extends ApplicationError {
  * External service error - for third-party API failures
  */
 export class ExternalServiceError extends ApplicationError {
-  constructor(service: string, originalError?: Error, context?: Record<string, any>) {
+  constructor(
+    service: string,
+    originalError?: Error,
+    context?: Record<string, any>,
+  ) {
     const message = `External service '${service}' error: ${originalError?.message || 'Unknown error'}`;
     super(message, 'EXTERNAL_SERVICE_ERROR', 502, true, {
       ...context,
       service,
-      originalError: originalError?.message
+      originalError: originalError?.message,
     });
   }
 }
@@ -144,13 +170,17 @@ export class FileProcessingError extends ApplicationError {
  * Timeout error - for operation timeouts
  */
 export class TimeoutError extends ApplicationError {
-  constructor(operation: string, timeout: number, context?: Record<string, any>) {
+  constructor(
+    operation: string,
+    timeout: number,
+    context?: Record<string, any>,
+  ) {
     super(
       `Operation '${operation}' timed out after ${timeout}ms`,
       'TIMEOUT_ERROR',
       504,
       true,
-      { ...context, operation, timeout }
+      { ...context, operation, timeout },
     );
   }
 }
@@ -174,10 +204,10 @@ export interface ErrorResponse {
 export function formatErrorResponse(
   error: Error | ApplicationError,
   path?: string,
-  correlationId?: string
+  correlationId?: string,
 ): ErrorResponse {
   const isApplicationError = error instanceof ApplicationError;
-  
+
   return {
     error: isApplicationError ? error.code : 'INTERNAL_SERVER_ERROR',
     message: error.message,
@@ -185,7 +215,7 @@ export function formatErrorResponse(
     timestamp: new Date().toISOString(),
     ...(path && { path }),
     ...(correlationId && { correlationId }),
-    ...(isApplicationError && error.context && { details: error.context })
+    ...(isApplicationError && error.context && { details: error.context }),
   };
 }
 
@@ -212,20 +242,23 @@ export function getStatusCode(error: Error | ApplicationError): number {
 /**
  * Wrap unknown errors into ApplicationError
  */
-export function wrapError(error: unknown, defaultMessage: string = 'An error occurred'): ApplicationError {
+export function wrapError(
+  error: unknown,
+  defaultMessage: string = 'An error occurred',
+): ApplicationError {
   if (error instanceof ApplicationError) {
     return error;
   }
-  
+
   if (error instanceof Error) {
     return new InternalServerError(error.message || defaultMessage, {
       originalError: error.name,
-      stack: error.stack
+      stack: error.stack,
     });
   }
-  
+
   return new InternalServerError(defaultMessage, {
-    originalError: String(error)
+    originalError: String(error),
   });
 }
 
@@ -234,7 +267,7 @@ export function wrapError(error: unknown, defaultMessage: string = 'An error occ
  * Catches errors and converts them to ApplicationError
  */
 export function asyncErrorHandler<T extends (...args: any[]) => Promise<any>>(
-  fn: T
+  fn: T,
 ): (...args: Parameters<T>) => Promise<ReturnType<T>> {
   return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
     try {
@@ -255,13 +288,13 @@ export async function retry<T>(
     delayMs?: number;
     backoff?: 'linear' | 'exponential';
     onRetry?: (attempt: number, error: Error) => void;
-  } = {}
+  } = {},
 ): Promise<T> {
   const {
     maxAttempts = 3,
     delayMs = 1000,
     backoff = 'exponential',
-    onRetry
+    onRetry,
   } = options;
 
   let lastError: Error;
@@ -271,7 +304,7 @@ export async function retry<T>(
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
+
       if (attempt === maxAttempts) {
         break;
       }
@@ -280,11 +313,12 @@ export async function retry<T>(
         onRetry(attempt, lastError);
       }
 
-      const delay = backoff === 'exponential' 
-        ? delayMs * Math.pow(2, attempt - 1)
-        : delayMs * attempt;
+      const delay =
+        backoff === 'exponential'
+          ? delayMs * Math.pow(2, attempt - 1)
+          : delayMs * attempt;
 
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 
@@ -297,7 +331,7 @@ export async function retry<T>(
 enum CircuitState {
   CLOSED = 'CLOSED',
   OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN'
+  HALF_OPEN = 'HALF_OPEN',
 }
 
 /**
@@ -312,7 +346,7 @@ export class CircuitBreaker {
   constructor(
     private threshold: number = 5,
     private timeout: number = 60000,
-    private resetTimeout: number = 30000
+    private resetTimeout: number = 30000,
   ) {}
 
   async execute<T>(fn: () => Promise<T>): Promise<T> {
@@ -335,7 +369,7 @@ export class CircuitBreaker {
 
   private onSuccess(): void {
     this.failureCount = 0;
-    
+
     if (this.state === CircuitState.HALF_OPEN) {
       this.successCount++;
       if (this.successCount >= 2) {

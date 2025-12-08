@@ -1,0 +1,135 @@
+# ==============================================================================
+# Root .dockerignore for Interview Buddy Monorepo
+# ==============================================================================
+# This file applies when building Docker images from the repository root.
+# Each service also has its own .dockerignore for service-specific optimization.
+
+# ==============================================================================
+# Version Control
+# ==============================================================================
+.git
+.gitignore
+.gitattributes
+.github
+
+# ==============================================================================
+# Dependencies (reinstalled during build)
+# ==============================================================================
+node_modules
+**/node_modules
+
+# ==============================================================================
+# Build Artifacts (generated during Docker build)
+# ==============================================================================
+dist
+build
+.next
+**/.next
+**/dist
+**/build
+*.tsbuildinfo
+**/*.tsbuildinfo
+
+# ==============================================================================
+# Environment & Secrets (SECURITY: Never copy into container)
+# ==============================================================================
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+**/.env
+**/.env.*
+*.key
+*.pem
+secrets/
+
+# ==============================================================================
+# Logs & Temporary Files
+# ==============================================================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+**/logs/
+tmp/
+temp/
+*.tmp
+
+# ==============================================================================
+# Test & Coverage
+# ==============================================================================
+coverage/
+.nyc_output/
+**/coverage/
+**/.nyc_output/
+test-results/
+**/__tests__
+**/test
+*.spec.ts
+*.test.ts
+*.spec.js
+*.test.js
+
+# ==============================================================================
+# Documentation (not needed in production containers)
+# ==============================================================================
+*.md
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+docs/
+**/docs/
+
+# ==============================================================================
+# IDE & Editor Files
+# ==============================================================================
+.vscode
+.idea
+.vs
+*.swp
+*.swo
+*.swn
+*~
+.project
+.classpath
+.settings
+.DS_Store
+Thumbs.db
+
+# ==============================================================================
+# CI/CD & Infrastructure (not needed in containers)
+# ==============================================================================
+.github/
+flux/
+manifests/
+scripts/
+Dockerfile
+**/Dockerfile
+.dockerignore
+**/.dockerignore
+docker-compose*.yml
+
+# ==============================================================================
+# Specification & Planning Documents
+# ==============================================================================
+specs/
+.specify/
+.claude/
+CLAUDE.md
+ORCHESTRATION_GUIDE.md
+MONOREPO_SETUP_INDEX.md
+SECURITY_SUMMARY.md
+TASK_ASSIGNMENTS.md
+TASK_SUMMARY.md
+WORKFLOW_DIAGRAM.md
+
+# ==============================================================================
+# Lock Files (handled by build stages)
+# ==============================================================================
+# Keep package-lock.json and bun.lock for dependency integrity
+# .npm/
+# .yarn/

@@ -2,18 +2,22 @@
   "name": "@interview-buddy/prisma-client",
   "version": "1.0.0",
   "private": true,
-  "main": "./index.js",
-  "types": "./index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
+    "build": "tsc",
     "generate": "prisma generate",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
     "studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0"
   },
   "devDependencies": {
-    "prisma": "^5.22.0"
+    "@types/node": "^22.10.1",
+    "prisma": "^5.22.0",
+    "typescript": "^5.7.2"
   }
 }
