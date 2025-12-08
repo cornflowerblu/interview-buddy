@@ -44,15 +44,15 @@ packages/
 
 **Purpose**: Project initialization and monorepo structure
 
-- [ ] T001 Initialize monorepo package.json with workspaces for apps/ and packages/
-- [ ] T002 [P] Setup TypeScript configuration with strict mode in root tsconfig.json
-- [ ] T [P] Configure ESLint and Prettier for monorepo in .eslintrc.js and .prettierrc
-- [ ] T [P] Create packages/shared-types/package.json with TypeScript setup
-- [ ] T [P] Create packages/shared-utils/package.json with utility structure
-- [ ] T Create packages/prisma-client/prisma/schema.prisma with base entities (User reference, Interview, Transcription, Analysis, PrepSession)
-- [ ] T Setup Prisma client generation in packages/prisma-client/package.json
-- [ ] T008 Configure Docker ignore files (.dockerignore) for all services
-- [ ] T009 [P] Setup Jest configuration for monorepo testing in jest.config.js
+- [x] T001 Initialize monorepo package.json with workspaces for apps/ and packages/
+- [x] T002 [P] Setup TypeScript configuration with strict mode in root tsconfig.json
+- [x] T [P] Configure ESLint and Prettier for monorepo in .eslintrc.js and .prettierrc
+- [x] T [P] Create packages/shared-types/package.json with TypeScript setup
+- [x] T [P] Create packages/shared-utils/package.json with utility structure
+- [x] T Create packages/prisma-client/prisma/schema.prisma with base entities (User reference, Interview, Transcription, Analysis, PrepSession)
+- [x] T Setup Prisma client generation in packages/prisma-client/package.json
+- [x] T008 Configure Docker ignore files (.dockerignore) for all services
+- [x] T009 [P] Setup Jest configuration for monorepo testing in jest.config.js
 
 **Checkpoint**: Monorepo structure ready for service implementation
 
@@ -66,16 +66,16 @@ packages/
 
 ### Database & Shared Packages
 
-- [ ] T010 Define Interview model in packages/prisma-client/prisma/schema.prisma
-- [ ] T011 [P] Define Transcription model in packages/prisma-client/prisma/schema.prisma
-- [ ] T012 [P] Define Analysis model in packages/prisma-client/prisma/schema.prisma
-- [ ] T013 [P] Define PrepSession model in packages/prisma-client/prisma/schema.prisma
-- [ ] T014 Create initial Prisma migration for all models
-- [ ] T015 [P] Define event payload types in packages/shared-types/src/events/index.ts (interview.uploaded, interview.transcribed, analysis.completed)
-- [ ] T016 [P] Define API contract types in packages/shared-types/src/api/index.ts
-- [ ] T017 [P] Create validation utilities in packages/shared-utils/src/validation/index.ts
-- [ ] T018 [P] Create logging utilities in packages/shared-utils/src/logging/index.ts
-- [ ] T019 [P] Create error handling utilities in packages/shared-utils/src/errors/index.ts
+- [x] T010 Define Interview model in packages/prisma-client/prisma/schema.prisma
+- [x] T011 [P] Define Transcription model in packages/prisma-client/prisma/schema.prisma
+- [x] T012 [P] Define Analysis model in packages/prisma-client/prisma/schema.prisma
+- [x] T013 [P] Define PrepSession model in packages/prisma-client/prisma/schema.prisma
+- [x] T014 Create initial Prisma migration for all models
+- [x] T015 [P] Define event payload types in packages/shared-types/src/events/index.ts (interview.uploaded, interview.transcribed, analysis.completed)
+- [x] T016 [P] Define API contract types in packages/shared-types/src/api/index.ts
+- [x] T017 [P] Create validation utilities in packages/shared-utils/src/validation/index.ts
+- [x] T018 [P] Create logging utilities in packages/shared-utils/src/logging/index.ts
+- [x] T019 [P] Create error handling utilities in packages/shared-utils/src/errors/index.ts
 
 ### Azure Infrastructure (Terraform)
 

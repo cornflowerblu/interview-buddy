@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ============================================================================
@@ -19,28 +18,28 @@ datasource db {
 // Status flow: uploading → uploaded → transcribing → analyzing → completed | failed
 
 model Interview {
-  id              String   @id @default(cuid())
-  userId          String
+  id     String @id @default(cuid())
+  userId String
 
   // Interview metadata (provided by user during upload)
-  company         String
-  jobTitle        String
-  interviewType   String   // behavioral | technical | phone | panel
-  notes           String?  @db.Text
+  company       String
+  jobTitle      String
+  interviewType String // behavioral | technical | phone | panel
+  notes         String? @db.Text
 
   // Processing status and tracking
-  status          String   // uploading | uploaded | transcribing | analyzing | completed | failed
-  videoIndexerUrl String?  // Azure Video Indexer asset URL (null during upload)
+  status          String // uploading | uploaded | transcribing | analyzing | completed | failed
+  videoIndexerUrl String? // Azure Video Indexer asset URL (null during upload)
 
   // Relationships
-  transcription   Transcription?
-  analysis        Analysis?
-  prepSessionId   String?
-  prepSession     PrepSession? @relation(fields: [prepSessionId], references: [id])
+  transcription Transcription?
+  analysis      Analysis?
+  prepSessionId String?
+  prepSession   PrepSession?   @relation(fields: [prepSessionId], references: [id])
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes for query optimization
   @@index([userId])
@@ -57,23 +56,23 @@ model Interview {
 // One-to-one relationship with Interview.
 
 model Transcription {
-  id              String   @id @default(cuid())
-  interviewId     String   @unique
-  interview       Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  interviewId String    @unique
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
 
   // Transcription content
-  text            String   @db.Text
-  
+  text String @db.Text
+
   // Structured data from Video Indexer (stored as JSON for flexibility)
-  timestamps      Json     // Array of { text: string, start: string, end: string, confidence: number }
-  speakers        Json?    // Speaker diarization data: [{ id, name, instances: [{ start, end }] }]
+  timestamps Json // Array of { text: string, start: string, end: string, confidence: number }
+  speakers   Json? // Speaker diarization data: [{ id, name, instances: [{ start, end }] }]
 
   // Metadata
-  language        String   @default("en-US")
-  confidence      Float?   // Overall transcription confidence (0-1)
+  language   String @default("en-US")
+  confidence Float? // Overall transcription confidence (0-1)
 
   // Timestamps
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Indexes
   @@index([interviewId])
@@ -89,24 +88,24 @@ model Transcription {
 // One-to-one relationship with Interview.
 
 model Analysis {
-  id              String   @id @default(cuid())
-  interviewId     String   @unique
-  interview       Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
+  id          String    @id @default(cuid())
+  interviewId String    @unique
+  interview   Interview @relation(fields: [interviewId], references: [id], onDelete: Cascade)
 
   // Analysis results (stored as JSON for schema flexibility)
-  speechMetrics   Json     // { fillerWords: number, fillerWordsList: string[], speakingPace: number, pauseCount: number, clarity: number }
-  contentAnalysis Json     // { starMethod: boolean, relevance: number, structureScore: number, keyPoints: string[] }
-  sentiment       Json     // { overall: string, confidence: number, enthusiasm: number, timeline: Array<{ time, sentiment }> }
+  speechMetrics   Json // { fillerWords: number, fillerWordsList: string[], speakingPace: number, pauseCount: number, clarity: number }
+  contentAnalysis Json // { starMethod: boolean, relevance: number, structureScore: number, keyPoints: string[] }
+  sentiment       Json // { overall: string, confidence: number, enthusiasm: number, timeline: Array<{ time, sentiment }> }
 
   // Overall metrics
-  overallScore    Float    // Composite score 0-100
-  recommendations Json     // Array of actionable improvement suggestions: string[]
+  overallScore    Float // Composite score 0-100
+  recommendations Json // Array of actionable improvement suggestions: string[]
 
   // Metadata
-  modelUsed       String   // Track which AI model generated this analysis (e.g., "gpt-4o", "claude-3.5-sonnet")
-  
+  modelUsed String // Track which AI model generated this analysis (e.g., "gpt-4o", "claude-3.5-sonnet")
+
   // Timestamps
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   // Indexes
   @@index([interviewId])
@@ -121,24 +120,24 @@ model Analysis {
 // One-to-many relationship with Interview (one prep session can be linked to multiple actual interviews).
 
 model PrepSession {
-  id              String   @id @default(cuid())
-  userId          String
+  id     String @id @default(cuid())
+  userId String
 
   // Prep session context
-  company         String
-  jobTitle        String
-  jobDescription  String?  @db.Text
+  company        String
+  jobTitle       String
+  jobDescription String? @db.Text
 
   // AI-generated prep content (stored as JSON for flexibility)
-  questions       Json     // Array of AI-generated questions: [{ id, question, category, difficulty }]
-  practiceAnswers Json     // Array of user answers with AI feedback: [{ questionId, answer, aiFeedback, score }]
+  questions       Json // Array of AI-generated questions: [{ id, question, category, difficulty }]
+  practiceAnswers Json // Array of user answers with AI feedback: [{ questionId, answer, aiFeedback, score }]
 
   // Relationships
-  interviews      Interview[]
+  interviews Interview[]
 
   // Timestamps
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Indexes for query optimization
   @@index([userId])
