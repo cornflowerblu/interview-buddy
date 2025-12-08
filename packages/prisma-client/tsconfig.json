@@ -4,8 +4,9 @@
     "composite": true,
     "module": "commonjs",
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": ".",
+    "baseUrl": "."
   },
-  "include": ["src/**/*"],
+  "include": ["index.ts", "prisma/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

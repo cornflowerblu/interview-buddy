@@ -16,15 +16,15 @@ export interface User {
 
 // Interview Upload Status
 export type InterviewUploadStatus =
-  | "uploading"
-  | "uploaded"
-  | "transcribing"
-  | "analyzing"
-  | "completed"
-  | "failed";
+  | 'uploading'
+  | 'uploaded'
+  | 'transcribing'
+  | 'analyzing'
+  | 'completed'
+  | 'failed';
 
 // Interview Type
-export type InterviewType = "behavioral" | "technical" | "phone" | "panel";
+export type InterviewType = 'behavioral' | 'technical' | 'phone' | 'panel';
 
 // Interview Entity
 export interface Interview {
@@ -78,7 +78,7 @@ export interface Analysis {
   answerRelevance: number;
 
   // Sentiment
-  overallSentiment: "positive" | "neutral" | "negative";
+  overallSentiment: 'positive' | 'neutral' | 'negative';
   confidenceLevel: number;
   enthusiasmScore: number;
   sentimentTimeline: SentimentPoint[];

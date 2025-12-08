@@ -1,6 +1,6 @@
 /**
  * Shared Utilities for Interview Buddy
- * 
+ *
  * This package provides common utilities for validation, logging, and error handling
  * across all microservices in the Interview Buddy platform.
  */
