@@ -17,15 +17,6 @@ spec:
         app: ai-analyzer-service
         environment: dev
     spec:
-      # Run on Virtual Nodes (ACI) for cost savings
-      nodeSelector:
-        kubernetes.io/role: agent
-        type: virtual-kubelet
-      tolerations:
-        - key: virtual-kubelet.io/provider
-          operator: Exists
-        - key: azure.com/aci
-          effect: NoSchedule
       containers:
         - name: ai-analyzer-service
           image: interviewbuddy.azurecr.io/ai-analyzer-service:latest
@@ -39,11 +30,11 @@ spec:
               value: "3002"
           resources:
             requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
               memory: "256Mi"
               cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
 ---
 apiVersion: v1
 kind: Service
