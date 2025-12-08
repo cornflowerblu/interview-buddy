@@ -87,6 +87,7 @@ Use these types for database entities and business logic:
 
 ```typescript
 import {
+  User,
   Interview,
   Transcription,
   Analysis,
@@ -139,6 +140,7 @@ const interview: Interview = {
 
 ### Domain Entities (root)
 
+- `User` - User profile (managed by Firebase Authentication)
 - `Interview` - Main interview entity
 - `Transcription` - Interview transcription
 - `Analysis` - AI analysis results

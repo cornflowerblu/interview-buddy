@@ -4,6 +4,16 @@ export * from './events';
 // Export API contract types
 export * from './api';
 
+// User Entity (managed by Firebase Authentication)
+export interface User {
+  id: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // Interview Upload Status
 export type InterviewUploadStatus =
   | 'uploading'
