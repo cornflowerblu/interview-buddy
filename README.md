@@ -248,7 +248,7 @@ Users **never see or download** their original recordings - only structured anal
 - [specs/plan.md](./specs/plan.md) - Infrastructure architecture
 
 **Your Tasks** (from [tasks.md](./specs/tasks.md)):
-- T020-T026: Redis, PostgreSQL Kubernetes deployments
+- T020-T031: Terraform infrastructure for Azure managed services (PostgreSQL, Redis, Video Indexer, AI Foundry)
 - T047-T049: Upload service K8s deployment + Istio VirtualService
 - T076-T077: Processor service K8s deployment
 - T111-T112: AI analyzer service K8s deployment
