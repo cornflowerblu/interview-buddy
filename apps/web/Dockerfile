@@ -20,9 +20,9 @@ FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=build /app/apps/web/public ./public
+COPY --from=build /app/apps/web/public ./apps/web/public
 COPY --from=build /app/apps/web/.next/standalone ./
-COPY --from=build /app/apps/web/.next/static ./.next/static
+COPY --from=build /app/apps/web/.next/static ./apps/web/.next/static
 
 USER bun
 
