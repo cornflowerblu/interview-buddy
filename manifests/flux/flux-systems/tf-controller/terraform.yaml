@@ -1,0 +1,13 @@
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: interview-buddy-infra
+  namespace: flux-system
+spec:
+  approvePlan: "manual"  # <-- Human must approve
+  path: ./terraform/environments/dev
+  sourceRef:
+    kind: GitRepository
+    name: interview-buddy
+  writeOutputsToSecret:
+    name: tf-outputs     # Service connection strings go here
