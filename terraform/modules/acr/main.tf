@@ -10,7 +10,10 @@ resource "random_string" "suffix" {
 
 # ACR names must be globally unique and alphanumeric only
 locals {
-  acr_name = replace("${var.name_prefix}acr${random_string.suffix.result}", "-", "")
+  # Ensure the ACR name is <= 50 characters and alphanumeric
+  acr_prefix_max_length = 50 - length("acr") - length(random_string.suffix.result)
+  acr_prefix_clean = substr(replace(var.name_prefix, "-", ""), 0, local.acr_prefix_max_length)
+  acr_name = "${local.acr_prefix_clean}acr${random_string.suffix.result}"
 }
 
 resource "azurerm_container_registry" "main" {

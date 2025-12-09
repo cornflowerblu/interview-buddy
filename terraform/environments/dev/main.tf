@@ -25,12 +25,13 @@ terraform {
 
   # Backend for TF-Controller - state stored in Kubernetes secret
   # Alternatively, use Azure Storage backend:
-  # backend "azurerm" {
-  #   resource_group_name  = "interview-buddy-tfstate"
-  #   storage_account_name = "ibtfstate"
-  #   container_name       = "tfstate"
-  #   key                  = "dev.terraform.tfstate"
-  # }
+  backend "azurerm" {
+    resource_group_name  = "interview-buddy-tfstate"
+    storage_account_name = "ibtfstate"
+    container_name       = "tfstate"
+    key                  = "dev.terraform.tfstate"
+    use_azuread_auth     = true
+  }
 }
 
 provider "azurerm" {
@@ -76,7 +77,7 @@ module "interview_buddy" {
   # ACR - Basic tier for dev
   acr_config = {
     sku                   = "Basic"
-    admin_enabled         = true  # Enabled for easy local dev
+    admin_enabled         = false  # Disabled for security; use Managed Identity for authentication
     public_network_access = true
   }
 

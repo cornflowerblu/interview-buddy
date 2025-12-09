@@ -25,8 +25,8 @@ resource "azurerm_redis_cache" "main" {
     maxmemory_policy = "noeviction"
   }
 
-  # Public network access (for dev - disable in prod with private endpoints)
-  public_network_access_enabled = true
+  # Public network access disabled to enforce private endpoints (security requirement)
+  public_network_access_enabled = false
 
   tags = var.tags
 }

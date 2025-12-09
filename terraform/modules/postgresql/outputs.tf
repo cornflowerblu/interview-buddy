@@ -26,7 +26,7 @@ output "admin_password" {
 
 output "database_url" {
   description = "PostgreSQL connection string for Prisma"
-  value       = "postgresql://${azurerm_postgresql_flexible_server.main.administrator_login}:${random_password.admin.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.databases[0]}?sslmode=require"
+  value       = length(var.databases) > 0 ? "postgresql://${azurerm_postgresql_flexible_server.main.administrator_login}:${random_password.admin.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.databases[0]}?sslmode=require" : ""
   sensitive   = true
 }
 
