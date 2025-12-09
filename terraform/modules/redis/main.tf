@@ -17,8 +17,8 @@ resource "azurerm_redis_cache" "main" {
   family   = var.family
   capacity = var.capacity
 
-  enable_non_ssl_port = !var.enable_tls
   minimum_tls_version = var.enable_tls ? "1.2" : null
+
 
   redis_configuration {
     # Enable Redis Streams (requires maxmemory-policy)
