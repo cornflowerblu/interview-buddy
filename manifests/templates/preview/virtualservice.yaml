@@ -7,7 +7,7 @@ spec:
   hosts:
     - "${HOST_NAME}"
   gateways:
-    - istio-system/interview-buddy-gateway
+    - default/nextjsportfolio-gateway
   http:
     # Route API calls to backend services
     - match:

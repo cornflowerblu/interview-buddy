@@ -25,7 +25,7 @@ spec:
             - containerPort: 3000
           envFrom:
             - secretRef:
-                name: previews-env
+                name: previews-nextjsportfolio-env
           env:
             - name: NODE_ENV
               value: "preview"
