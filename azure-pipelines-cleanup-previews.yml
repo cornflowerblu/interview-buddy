@@ -28,7 +28,7 @@ parameters:
 
 variables:
   acrName: "ibdevacrpuj79a"
-  azureSubscription: "dev-letsfuckingsee-dev-1765210149237"
+  azureSubscription: "devops"
 
 jobs:
   - job: CleanupPreviews
