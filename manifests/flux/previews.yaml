@@ -1,0 +1,20 @@
+# Preview environments for feature branches
+# Flux automatically deploys new previews when manifests/previews/{sha}/ is created
+# Flux automatically cleans up when preview directories are removed (prune: true)
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: previews
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: ./manifests/previews
+  prune: true  # Automatically cleanup when preview directories are deleted
+  sourceRef:
+    kind: GitRepository
+    name: interview-buddy
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: "*"
+      namespace: previews
