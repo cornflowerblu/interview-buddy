@@ -16,7 +16,7 @@ variables:
   acrLoginServer: "ibdevacrpuj79a.azurecr.io"
   aksClusterName: "letsfuckingsee"
   aksResourceGroup: "interview-buddy-dev"
-  azureSubscription: "devops"
+  azureSubscription: "interview-buddy"
 
 stages:
   # ========== TEST (Parallel Jobs) ==========

@@ -28,7 +28,7 @@ parameters:
 
 variables:
   acrName: "ibdevacrpuj79a"
-  azureSubscription: "devops"
+  azureSubscription: "interview-buddy"
 
 jobs:
   - job: CleanupPreviews
