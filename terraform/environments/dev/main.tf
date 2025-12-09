@@ -26,11 +26,10 @@ terraform {
   # Backend for TF-Controller - state stored in Kubernetes secret
   # Alternatively, use Azure Storage backend:
   backend "azurerm" {
-    resource_group_name  = "interview-buddy-tfstate"
-    storage_account_name = "ibtfstate"
+    resource_group_name  = "rg-interview-buddy-tfstate"
+    storage_account_name = "stibtfstate1765235010"
     container_name       = "tfstate"
     key                  = "dev.terraform.tfstate"
-    use_azuread_auth     = true
   }
 }
 

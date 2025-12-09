@@ -13,13 +13,8 @@ resource "random_string" "suffix" {
 
 # Storage account for Video Indexer media files
 resource "azurerm_storage_account" "media" {
-  name = substr(
-    regexreplace("${var.name_prefix}", "[^a-z0-9]", ""),
-    0,
-    24 - length("vimedia") - length(random_string.suffix.result)
-  ) 
-  # Concatenate sanitized/truncated prefix, "vimedia", and random string, then ensure ≤24 chars
-  name = "${substr(regexreplace(var.name_prefix, "[^a-z0-9]", ""), 0, 24 - length("vimedia") - length(random_string.suffix.result))}vimedia${random_string.suffix.result}"
+  # Storage account names must be 3-24 chars, lowercase alphanumeric only
+  name = "${substr(replace(var.name_prefix, "/[^a-z0-9]/", ""), 0, 24 - length("vimedia") - length(random_string.suffix.result))}vimedia${random_string.suffix.result}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
