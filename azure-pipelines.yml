@@ -61,12 +61,7 @@ stages:
       - job: TerraformPlan
         displayName: 'Terraform Plan'
         pool: macos
-        condition: |
-          and(
-            succeeded(),
-            eq(variables['Build.Reason'], 'PullRequest'),
-            contains(variables['System.PullRequest.SourceBranch'], 'terraform')
-          )
+        condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
         steps:
           - checkout: self
             fetchDepth: 0
