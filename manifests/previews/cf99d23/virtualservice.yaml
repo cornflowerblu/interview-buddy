@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: preview-cf99d23-vs
+  namespace: previews
+spec:
+  hosts:
+    - "preview-cf99d23.slingshotgrp.com"
+  gateways:
+    - default/nextjsportfolio-gateway
+  http:
+    # Route API calls to backend services
+    - match:
+        - uri:
+            prefix: /api/upload
+      route:
+        - destination:
+            host: upload-service-cf99d23.previews.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /api/processor
+      route:
+        - destination:
+            host: processor-service-cf99d23.previews.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /api/analyze
+      route:
+        - destination:
+            host: ai-analyzer-service-cf99d23.previews.svc.cluster.local
+            port:
+              number: 80
+    # Default route to web frontend
+    - route:
+        - destination:
+            host: web-cf99d23.previews.svc.cluster.local
+            port:
+              number: 80
