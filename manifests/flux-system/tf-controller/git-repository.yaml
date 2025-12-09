@@ -1,0 +1,21 @@
+# -----------------------------------------------------------------------------
+# GitRepository - Source for Terraform modules
+# -----------------------------------------------------------------------------
+# Flux watches this repository for changes to the terraform/ directory.
+# -----------------------------------------------------------------------------
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: interview-buddy
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/cornflowerblu/interview-buddy
+  ref:
+    branch: main
+  # Ignore everything except terraform/ to reduce reconciliation noise
+  ignore: |
+    # Exclude all
+    /*
+    # Include terraform directory
+    !/terraform/

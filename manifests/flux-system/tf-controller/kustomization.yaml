@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: flux-system
+
+resources:
+  - namespace.yaml
+  - git-repository.yaml
+  - terraform-dev.yaml
+  # NOTE: azure-credentials.yaml is a TEMPLATE
+  # Create the actual secret manually or via Sealed Secrets
+  # Do NOT include it here to avoid committing credentials
