@@ -1,0 +1,74 @@
+# -----------------------------------------------------------------------------
+# Terraform CR - Dev Environment Infrastructure
+# -----------------------------------------------------------------------------
+# This CR uses "plan-and-manually-apply" mode:
+# 1. TF-Controller automatically runs 'terraform plan' on changes
+# 2. Plan output is stored and visible via 'kubectl describe'
+# 3. Human must approve the plan before apply runs
+# 4. Outputs are written to a Kubernetes secret for services to consume
+# -----------------------------------------------------------------------------
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: interview-buddy-dev
+  namespace: flux-system
+spec:
+  # Source: Git repository containing Terraform code
+  sourceRef:
+    kind: GitRepository
+    name: interview-buddy
+    namespace: flux-system
+
+  # Path to the dev environment configuration
+  path: ./terraform/environments/dev
+
+  # Reconciliation interval - how often to check for drift
+  interval: 10m
+
+  # MANUAL APPROVAL MODE
+  # When set to "manual", TF-Controller runs plan but waits for human approval
+  # To approve: kubectl annotate terraform interview-buddy-dev \
+  #   -n flux-system \
+  #   infra.contrib.fluxcd.io/approve="plan-main-<revision>"
+  approvePlan: manual
+
+  # Store plan output for review
+  storeReadablePlan: human
+
+  # Destroy resources when this CR is deleted? (safety: false for prod)
+  destroyResourcesOnDeletion: false
+
+  # Azure credentials from secret
+  cliConfigSecretRef:
+    name: azure-credentials
+    namespace: flux-system
+
+  # Environment variables for Azure provider authentication
+  runnerPodTemplate:
+    spec:
+      envFrom:
+        - secretRef:
+            name: azure-credentials
+
+  # Write Terraform outputs to a Kubernetes secret
+  # Services can mount this secret to get connection strings
+  writeOutputsToSecret:
+    name: terraform-outputs-dev
+    labels:
+      app.kubernetes.io/part-of: interview-buddy
+      app.kubernetes.io/component: infrastructure
+
+  # Health checks - verify Terraform state is healthy
+  healthChecks:
+    - name: postgresql
+      type: tcp
+      address: "${postgresql_fqdn}:5432"
+    - name: redis
+      type: tcp
+      address: "${redis_hostname}:${redis_port}"
+
+  # Retry configuration
+  retryInterval: 5m
+
+  # Refresh state before planning (catches drift)
+  refreshBeforeApply: true

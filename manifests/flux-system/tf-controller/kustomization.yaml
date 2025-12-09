@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: flux-system
+
+resources:
+  - namespace.yaml
+  - terraform-dev.yaml
+  # NOTE: This references the GitRepository 'interview-buddy' from manifests/flux/
+  # NOTE: azure-credentials.yaml.example is a TEMPLATE
+  # Create the actual secret manually or via Sealed Secrets:
+  #   kubectl create secret generic azure-credentials \
+  #     --namespace=flux-system \
+  #     --from-literal=ARM_CLIENT_ID=<appId> \
+  #     --from-literal=ARM_CLIENT_SECRET=<password> \
+  #     --from-literal=ARM_SUBSCRIPTION_ID=<subscription-id> \
+  #     --from-literal=ARM_TENANT_ID=<tenant>

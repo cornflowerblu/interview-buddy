@@ -1,0 +1,17 @@
+# -----------------------------------------------------------------------------
+# Dev Environment Variables (Example)
+# -----------------------------------------------------------------------------
+# Copy this file to dev.tfvars and fill in your values for local development.
+# This file is ignored by git (see .gitignore).
+#
+# Usage:
+#   terraform plan -var-file=dev.tfvars
+#   terraform apply -var-file=dev.tfvars
+# -----------------------------------------------------------------------------
+
+# Note: Most values are already set in main.tf for the dev environment.
+# Only override here if you need different values for local testing.
+
+# Example overrides:
+# resource_group_name = "my-custom-rg"
+# location            = "westus2"

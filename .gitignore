@@ -32,3 +32,20 @@ Thumbs.db
 # Test coverage
 coverage/
 .nyc_output/
+
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+.terraform/
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Kubernetes secrets (never commit real credentials)
+**/azure-credentials.yaml
+!**/azure-credentials.yaml.example
