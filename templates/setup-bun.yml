@@ -20,5 +20,5 @@ steps:
   - script: |
       export BUN_INSTALL="$HOME/.bun"
       export PATH="$BUN_INSTALL/bin:$PATH"
-      bun install --frozen-lockfile
+      bun install
     displayName: 'Install dependencies'
