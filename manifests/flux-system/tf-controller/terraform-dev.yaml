@@ -38,11 +38,6 @@ spec:
   # Destroy resources when this CR is deleted? (safety: false for prod)
   destroyResourcesOnDeletion: false
 
-  # Azure credentials from secret
-  cliConfigSecretRef:
-    name: azure-credentials
-    namespace: flux-system
-
   # Environment variables for Azure provider authentication
   runnerPodTemplate:
     spec:
