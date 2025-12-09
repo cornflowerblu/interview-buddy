@@ -93,3 +93,17 @@ resource "azurerm_postgresql_flexible_server_configuration" "ssl_min_protocol_ve
   server_id = azurerm_postgresql_flexible_server.main.id
   value     = "TLSv1.2"
 }
+
+# Enable Entra ID (Azure AD) authentication
+resource "azurerm_postgresql_flexible_server_active_directory_administrator" "entra_admin" {
+  count = var.entra_admin_object_id != null ? 1 : 0
+
+  server_name         = azurerm_postgresql_flexible_server.main.name
+  resource_group_name = var.resource_group_name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  object_id           = var.entra_admin_object_id
+  principal_name      = var.entra_admin_principal_name
+  principal_type      = var.entra_admin_principal_type
+}
+
+data "azurerm_client_config" "current" {}

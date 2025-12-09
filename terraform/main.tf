@@ -44,6 +44,11 @@ module "postgresql" {
   databases        = var.postgresql_databases
   allowed_ip_ranges = var.allowed_ip_ranges
 
+  # Entra ID authentication
+  entra_admin_object_id      = var.postgresql_entra_admin_object_id
+  entra_admin_principal_name = var.postgresql_entra_admin_principal_name
+  entra_admin_principal_type = var.postgresql_entra_admin_principal_type
+
   tags = local.common_tags
 }
 

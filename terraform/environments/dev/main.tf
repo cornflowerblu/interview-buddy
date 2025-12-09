@@ -65,6 +65,11 @@ module "interview_buddy" {
   }
   postgresql_databases = ["interviewbuddy"]
 
+  # Entra ID admin for PostgreSQL
+  postgresql_entra_admin_object_id      = "4e9880a2-2739-4ec0-a719-20a183bb909d"
+  postgresql_entra_admin_principal_name = "rogeru63_gmail.com#EXT#@rogeru63gmail.onmicrosoft.com"
+  postgresql_entra_admin_principal_type = "User"
+
   # Redis - Basic tier for dev
   redis_config = {
     sku_name   = "Basic"

@@ -59,6 +59,24 @@ variable "postgresql_databases" {
   default     = ["interviewbuddy"]
 }
 
+variable "postgresql_entra_admin_object_id" {
+  description = "Object ID of the Entra ID user/group to set as PostgreSQL admin"
+  type        = string
+  default     = null
+}
+
+variable "postgresql_entra_admin_principal_name" {
+  description = "Principal name (email/UPN) of the Entra ID admin"
+  type        = string
+  default     = null
+}
+
+variable "postgresql_entra_admin_principal_type" {
+  description = "Type of Entra ID principal (User, Group, ServicePrincipal)"
+  type        = string
+  default     = "User"
+}
+
 # -----------------------------------------------------------------------------
 # Redis Configuration
 # -----------------------------------------------------------------------------

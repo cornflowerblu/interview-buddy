@@ -66,3 +66,21 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "entra_admin_object_id" {
+  description = "Object ID of the Entra ID user/group to set as PostgreSQL admin"
+  type        = string
+  default     = null
+}
+
+variable "entra_admin_principal_name" {
+  description = "Principal name (email) of the Entra ID admin"
+  type        = string
+  default     = null
+}
+
+variable "entra_admin_principal_type" {
+  description = "Type of Entra ID principal (User, Group, ServicePrincipal)"
+  type        = string
+  default     = "User"
+}
