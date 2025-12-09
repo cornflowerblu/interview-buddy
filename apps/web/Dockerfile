@@ -2,26 +2,27 @@
 FROM oven/bun:1.3.4-slim AS base
 WORKDIR /app
 
-# Install dependencies
-FROM base AS deps
-COPY package.json bun.lockb* ./
-RUN bun install --frozen-lockfile
-
-# Build application
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Build stage - install all deps and build
+FROM base AS build
+COPY package.json bun.lock tsconfig.base.json ./
+COPY apps/web ./apps/web
+COPY packages ./packages
+RUN bun install
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN bun run build
+# Generate Prisma client and build packages first
+RUN cd packages/prisma-client && bunx prisma generate
+RUN cd packages/shared-types && bun run build
+RUN cd packages/shared-utils && bun run build
+RUN cd apps/web && bun run build
 
-# Production image
+# Production image - Next.js standalone
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+COPY --from=build /app/apps/web/public ./public
+COPY --from=build /app/apps/web/.next/standalone ./
+COPY --from=build /app/apps/web/.next/static ./.next/static
 
 USER bun
 

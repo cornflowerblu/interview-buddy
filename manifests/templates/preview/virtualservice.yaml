@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: preview-${PREVIEW_NAME}-vs
+  namespace: ${PREVIEW_NAMESPACE}
+spec:
+  hosts:
+    - "${HOST_NAME}"
+  gateways:
+    - default/nextjsportfolio-gateway
+  http:
+    # Route API calls to backend services
+    - match:
+        - uri:
+            prefix: /api/upload
+      route:
+        - destination:
+            host: upload-service-${PREVIEW_NAME}.${PREVIEW_NAMESPACE}.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /api/processor
+      route:
+        - destination:
+            host: processor-service-${PREVIEW_NAME}.${PREVIEW_NAMESPACE}.svc.cluster.local
+            port:
+              number: 80
+    - match:
+        - uri:
+            prefix: /api/analyze
+      route:
+        - destination:
+            host: ai-analyzer-service-${PREVIEW_NAME}.${PREVIEW_NAMESPACE}.svc.cluster.local
+            port:
+              number: 80
+    # Default route to web frontend
+    - route:
+        - destination:
+            host: web-${PREVIEW_NAME}.${PREVIEW_NAMESPACE}.svc.cluster.local
+            port:
+              number: 80

@@ -2,26 +2,30 @@
 FROM oven/bun:1.3.4-slim AS base
 WORKDIR /app
 
-# Install dependencies stage
-FROM base AS install
-COPY package.json ./
-RUN bun install
-
-# Build stage
+# Build stage - install all deps and build
 FROM base AS build
-COPY --from=install /app/node_modules ./node_modules
-COPY . .
-RUN bun run build
+COPY package.json bun.lock tsconfig.base.json ./
+COPY apps/processor-service ./apps/processor-service
+COPY packages ./packages
+RUN bun install
+# Generate Prisma client and build
+RUN cd packages/prisma-client && bunx prisma generate
+RUN cd packages/shared-types && bun run build
+RUN cd packages/shared-utils && bun run build
+RUN cd apps/processor-service && bun run build
 
-# Production stage
+# Production stage - use app directory as workdir
 FROM base AS production
 ENV NODE_ENV=production
+WORKDIR /app/apps/processor-service
 
-COPY --from=install /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+# Copy the entire built workspace structure
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/apps/processor-service/node_modules ./node_modules
+COPY --from=build /app/apps/processor-service/dist ./dist
+COPY --from=build /app/apps/processor-service/package.json ./
+COPY --from=build /app/packages/prisma-client /app/packages/prisma-client
 
-# Use bun user (already exists in image)
 USER bun
 
 EXPOSE 3001

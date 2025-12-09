@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: ${PREVIEW_NAMESPACE}
+  labels:
+    app: web
+    preview: "${PREVIEW_NAME}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+      preview: "${PREVIEW_NAME}"
+  template:
+    metadata:
+      labels:
+        app: web
+        preview: "${PREVIEW_NAME}"
+    spec:
+      containers:
+        - name: web
+          image: ${ACR_LOGIN_SERVER}/web:${IMAGE_TAG}
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: previews-nextjsportfolio-env
+          env:
+            - name: NODE_ENV
+              value: "preview"
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: ${PREVIEW_NAMESPACE}
+  labels:
+    preview: "${PREVIEW_NAME}"
+spec:
+  selector:
+    app: web
+    preview: "${PREVIEW_NAME}"
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

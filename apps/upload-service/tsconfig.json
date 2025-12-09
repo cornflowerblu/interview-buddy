@@ -4,6 +4,7 @@
     "composite": true,
     "module": "commonjs",
     "outDir": "./dist",
+    "rootDir": "./src",
     "baseUrl": "./",
     "paths": {
       "@interview-buddy/shared-types": ["../../packages/shared-types/src"],

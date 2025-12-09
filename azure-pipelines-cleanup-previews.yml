@@ -1,0 +1,160 @@
+# Cleanup stale preview environments
+# Runs every 6 hours to remove previews older than 24 hours
+
+schedules:
+  - cron: '0 */6 * * *' # Run every 6 hours
+    displayName: 'Cleanup stale previews'
+    branches:
+      include:
+        - main
+    always: true
+
+trigger: none
+pr: none
+
+parameters:
+  - name: maxAgeHours
+    displayName: 'Max age in hours (previews older than this will be deleted)'
+    type: number
+    default: 24
+  - name: dryRun
+    displayName: 'Dry run (show what would be deleted without deleting)'
+    type: boolean
+    default: false
+  - name: specificSha
+    displayName: 'Specific SHA to delete (leave empty for age-based cleanup)'
+    type: string
+    default: ''
+
+variables:
+  acrName: 'ibdevacrpuj79a'
+  azureSubscription: 'devops'
+
+jobs:
+  - job: CleanupPreviews
+    displayName: 'Cleanup Stale Preview Environments'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - checkout: self
+        persistCredentials: true
+        fetchDepth: 0
+
+      - script: |
+          set -e
+
+          MAX_AGE_SECONDS=$((${MAX_AGE_HOURS} * 3600))
+          NOW=$(date +%s)
+          PREVIEW_DIR="manifests/previews"
+          DELETED_COUNT=0
+          DRY_RUN="${DRY_RUN}"
+          SPECIFIC_SHA="${SPECIFIC_SHA}"
+
+          echo "Configuration:"
+          echo "  Max age: ${MAX_AGE_HOURS} hours (${MAX_AGE_SECONDS} seconds)"
+          echo "  Dry run: ${DRY_RUN}"
+          echo "  Specific SHA: ${SPECIFIC_SHA:-'(none - age-based cleanup)'}"
+          echo ""
+
+          git config user.email "azure-pipelines@slingshotgrp.com"
+          git config user.name "Azure Pipelines"
+
+          # If specific SHA provided, just delete that one
+          if [ -n "$SPECIFIC_SHA" ]; then
+            if [ -d "$PREVIEW_DIR/$SPECIFIC_SHA" ]; then
+              echo "Deleting specific preview: $SPECIFIC_SHA"
+              if [ "$DRY_RUN" != "true" ]; then
+                rm -rf "$PREVIEW_DIR/$SPECIFIC_SHA"
+                sed -i "/  - $SPECIFIC_SHA\//d" "$PREVIEW_DIR/kustomization.yaml"
+                DELETED_COUNT=1
+              else
+                echo "[DRY RUN] Would delete: $PREVIEW_DIR/$SPECIFIC_SHA"
+              fi
+            else
+              echo "Preview $SPECIFIC_SHA not found"
+            fi
+          else
+            # Age-based cleanup
+            for sha_dir in "$PREVIEW_DIR"/*/; do
+              [ -d "$sha_dir" ] || continue
+
+              SHA=$(basename "$sha_dir")
+
+              # Skip non-preview directories
+              if [ "$SHA" = "namespace.yaml" ] || [ "$SHA" = "kustomization.yaml" ]; then
+                continue
+              fi
+
+              # Get commit date for this SHA
+              COMMIT_DATE=$(git log -1 --format=%ct "$SHA" 2>/dev/null || echo "0")
+
+              if [ "$COMMIT_DATE" = "0" ]; then
+                # Commit not found - orphaned preview
+                echo "Orphaned preview (commit not found): $SHA"
+                AGE_HOURS="orphaned"
+              else
+                AGE=$((NOW - COMMIT_DATE))
+                AGE_HOURS=$((AGE / 3600))
+              fi
+
+              if [ "$AGE_HOURS" = "orphaned" ] || [ "$AGE" -gt "$MAX_AGE_SECONDS" ]; then
+                echo "Deleting stale preview: $SHA (age: ${AGE_HOURS}h)"
+
+                if [ "$DRY_RUN" != "true" ]; then
+                  rm -rf "$sha_dir"
+                  sed -i "/  - $SHA\//d" "$PREVIEW_DIR/kustomization.yaml"
+                  DELETED_COUNT=$((DELETED_COUNT + 1))
+                else
+                  echo "[DRY RUN] Would delete: $sha_dir"
+                fi
+              else
+                echo "Keeping preview: $SHA (age: ${AGE_HOURS}h)"
+              fi
+            done
+          fi
+
+          echo ""
+          echo "Cleanup complete. Deleted: $DELETED_COUNT preview(s)"
+
+          # Commit and push if changes were made
+          if [ "$DELETED_COUNT" -gt 0 ] && [ "$DRY_RUN" != "true" ]; then
+            git add "$PREVIEW_DIR"
+            git commit -m "chore(preview): cleanup ${DELETED_COUNT} stale preview(s) [skip ci]"
+            git push origin main
+            echo "Changes pushed to main"
+          fi
+        displayName: 'Cleanup Stale Previews'
+        env:
+          MAX_AGE_HOURS: ${{ parameters.maxAgeHours }}
+          DRY_RUN: ${{ parameters.dryRun }}
+          SPECIFIC_SHA: ${{ parameters.specificSha }}
+
+      # Cleanup ACR images for deleted previews
+      - task: AzureCLI@2
+        displayName: 'Cleanup ACR Preview Images'
+        condition: and(succeeded(), eq('${{ parameters.dryRun }}', false))
+        inputs:
+          azureSubscription: $(azureSubscription)
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            echo "Cleaning up orphaned ACR images..."
+
+            # Get all preview- tags from ACR
+            for service in web upload-service processor-service ai-analyzer-service; do
+              echo "Checking $service..."
+
+              TAGS=$(az acr repository show-tags --name $(acrName) --repository $service --query "[?starts_with(@, 'preview-')]" -o tsv 2>/dev/null || true)
+
+              for tag in $TAGS; do
+                SHA=${tag#preview-}
+
+                # Check if preview directory still exists
+                if [ ! -d "manifests/previews/$SHA" ]; then
+                  echo "Deleting orphaned image: $service:$tag"
+                  az acr repository delete --name $(acrName) --image "$service:$tag" --yes || true
+                fi
+              done
+            done
+
+            echo "ACR cleanup complete"
