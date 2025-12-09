@@ -1,0 +1,42 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dev-vs
+  namespace: dev
+spec:
+  hosts:
+    - "dev.slingshotgrp.com"
+  gateways:
+    - default/nextjsportfolio-gateway
+  http:
+    # Route API calls to backend services
+    - match:
+        - uri:
+            prefix: /api/upload
+      route:
+        - destination:
+            host: upload-service.dev.svc.cluster.local
+            port:
+              number: 3000
+    - match:
+        - uri:
+            prefix: /api/processor
+      route:
+        - destination:
+            host: processor-service.dev.svc.cluster.local
+            port:
+              number: 3001
+    - match:
+        - uri:
+            prefix: /api/analyze
+      route:
+        - destination:
+            host: ai-analyzer-service.dev.svc.cluster.local
+            port:
+              number: 3002
+    # Default route to web frontend
+    - route:
+        - destination:
+            host: web.dev.svc.cluster.local
+            port:
+              number: 3000

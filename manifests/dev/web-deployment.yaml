@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: interviewbuddy.azurecr.io/web:latest
+          image: ibdevacrpuj79a.azurecr.io/web:latest
           ports:
             - containerPort: 3000
               name: http

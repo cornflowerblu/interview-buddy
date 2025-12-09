@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ai-analyzer-service
-          image: interviewbuddy.azurecr.io/ai-analyzer-service:latest
+          image: ibdevacrpuj79a.azurecr.io/ai-analyzer-service:latest
           ports:
             - containerPort: 3002
               name: http

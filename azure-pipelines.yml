@@ -100,29 +100,15 @@ stages:
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - job: DockerBuild
-        displayName: 'Docker Build & Push'
+        displayName: 'Build All Images'
         pool:
           vmImage: 'ubuntu-latest'
-        strategy:
-          matrix:
-            web:
-              serviceName: 'web'
-              dockerfilePath: 'apps/web/Dockerfile'
-            upload-service:
-              serviceName: 'upload-service'
-              dockerfilePath: 'apps/upload-service/Dockerfile'
-            processor-service:
-              serviceName: 'processor-service'
-              dockerfilePath: 'apps/processor-service/Dockerfile'
-            ai-analyzer-service:
-              serviceName: 'ai-analyzer-service'
-              dockerfilePath: 'apps/ai-analyzer-service/Dockerfile'
         steps:
           - checkout: self
             fetchDepth: 1
 
           - task: AzureCLI@2
-            displayName: 'Build and Push $(serviceName)'
+            displayName: 'Build and Push All Images'
             inputs:
               azureSubscription: $(azureSubscription)
               scriptType: 'bash'
@@ -130,14 +116,19 @@ stages:
               inlineScript: |
                 az acr login --name $(acrName)
 
-                docker build \
-                  -t $(acrLoginServer)/$(serviceName):$(Build.BuildId) \
-                  -t $(acrLoginServer)/$(serviceName):latest \
-                  -f $(dockerfilePath) \
-                  .
-
-                docker push $(acrLoginServer)/$(serviceName):$(Build.BuildId)
-                docker push $(acrLoginServer)/$(serviceName):latest
+                # Build all 4 services in single job (faster than parallel matrix)
+                for service in web upload-service processor-service ai-analyzer-service; do
+                  echo "=========================================="
+                  echo "Building $service..."
+                  echo "=========================================="
+                  docker build \
+                    -t $(acrLoginServer)/${service}:$(Build.BuildId) \
+                    -t $(acrLoginServer)/${service}:latest \
+                    -f apps/${service}/Dockerfile \
+                    .
+                  docker push $(acrLoginServer)/${service}:$(Build.BuildId)
+                  docker push $(acrLoginServer)/${service}:latest
+                done
 
   # ========== DEPLOY PREVIEW (Feature/Bugfix branches) ==========
   - stage: DeployPreview
@@ -252,7 +243,7 @@ stages:
                     # Update image tags in dev kustomization
                     cd manifests/dev
                     for service in web upload-service processor-service ai-analyzer-service; do
-                      sed -i "s|image: .*/\${service}:.*|image: $(acrLoginServer)/${service}:$(Build.BuildId)|g" ${service}-deployment.yaml
+                      sed -i "s|image: .*/${service}:.*|image: $(acrLoginServer)/${service}:$(Build.BuildId)|g" ${service}-deployment.yaml
                     done
 
                     git add .

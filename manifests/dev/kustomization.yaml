@@ -9,3 +9,4 @@ resources:
   - processor-service-deployment.yaml
   - ai-analyzer-service-deployment.yaml
   - web-deployment.yaml
+  - virtualservice.yaml

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: processor-service
-          image: interviewbuddy.azurecr.io/processor-service:latest
+          image: ibdevacrpuj79a.azurecr.io/processor-service:latest
           ports:
             - containerPort: 3001
               name: http
