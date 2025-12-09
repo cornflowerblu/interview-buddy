@@ -26,8 +26,7 @@ stages:
       # Job 1: Lint (runs in parallel)
       - job: Lint
         displayName: 'ESLint'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: macos
         steps:
           - checkout: self
             fetchDepth: 1
@@ -44,8 +43,7 @@ stages:
       # Job 2: Unit Tests (runs in parallel)
       - job: UnitTest
         displayName: 'Unit Tests'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: macos
         steps:
           - checkout: self
             fetchDepth: 1
@@ -62,8 +60,7 @@ stages:
       # Job 3: Terraform Plan (if terraform changed)
       - job: TerraformPlan
         displayName: 'Terraform Plan'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: macos
         condition: |
           and(
             succeeded(),
