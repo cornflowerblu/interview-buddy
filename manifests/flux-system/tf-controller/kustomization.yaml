@@ -5,8 +5,13 @@ namespace: flux-system
 
 resources:
   - namespace.yaml
-  - git-repository.yaml
   - terraform-dev.yaml
-  # NOTE: azure-credentials.yaml is a TEMPLATE
-  # Create the actual secret manually or via Sealed Secrets
-  # Do NOT include it here to avoid committing credentials
+  # NOTE: This references the GitRepository 'interview-buddy' from manifests/flux/
+  # NOTE: azure-credentials.yaml.example is a TEMPLATE
+  # Create the actual secret manually or via Sealed Secrets:
+  #   kubectl create secret generic azure-credentials \
+  #     --namespace=flux-system \
+  #     --from-literal=ARM_CLIENT_ID=<appId> \
+  #     --from-literal=ARM_CLIENT_SECRET=<password> \
+  #     --from-literal=ARM_SUBSCRIPTION_ID=<subscription-id> \
+  #     --from-literal=ARM_TENANT_ID=<tenant>
