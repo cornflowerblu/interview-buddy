@@ -53,7 +53,7 @@ resource "azapi_resource" "video_indexer" {
 
   tags = var.tags
 
-  response_export_values = ["properties.accountId", "properties.accountName"]
+  response_export_values = ["properties.accountId", "properties.accountName", "identity"]
 }
 
 # Get current subscription
@@ -64,4 +64,6 @@ resource "azurerm_role_assignment" "vi_storage_contributor" {
   scope                = azurerm_storage_account.media.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = jsondecode(azapi_resource.video_indexer.output).identity.principalId
+
+  depends_on = [azapi_resource.video_indexer]
 }

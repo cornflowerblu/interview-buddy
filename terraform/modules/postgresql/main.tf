@@ -29,6 +29,12 @@ resource "azurerm_postgresql_flexible_server" "main" {
   backup_retention_days        = var.backup_retention_days
   geo_redundant_backup_enabled = var.geo_redundant_backup
 
+  # Enable Entra ID authentication if admin is configured
+  authentication {
+    active_directory_auth_enabled = var.entra_admin_object_id != null
+    password_auth_enabled         = true
+  }
+
   dynamic "high_availability" {
     for_each = var.high_availability_mode != "Disabled" ? [1] : []
     content {
