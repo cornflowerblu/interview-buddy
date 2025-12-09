@@ -4,24 +4,35 @@ WORKDIR /app
 
 # Install dependencies stage
 FROM base AS install
-COPY package.json ./
-RUN bun install
+# Copy all package.json files for workspace resolution
+COPY package.json bun.lock ./
+COPY apps/upload-service/package.json ./apps/upload-service/
+COPY packages/shared-types/package.json ./packages/shared-types/
+COPY packages/shared-utils/package.json ./packages/shared-utils/
+COPY packages/prisma-client/package.json ./packages/prisma-client/
+RUN bun install --frozen-lockfile
 
 # Build stage
 FROM base AS build
 COPY --from=install /app/node_modules ./node_modules
+COPY --from=install /app/apps/upload-service/node_modules ./apps/upload-service/node_modules
+COPY --from=install /app/packages ./packages
 COPY . .
-RUN bun run build
+# Generate Prisma client and build packages first
+RUN cd packages/prisma-client && bunx prisma generate
+RUN bun run --filter '@interview-buddy/shared-types' build
+RUN bun run --filter '@interview-buddy/shared-utils' build
+RUN bun run --filter 'upload-service' build
 
 # Production stage
 FROM base AS production
 ENV NODE_ENV=production
 
 COPY --from=install /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY package.json ./
+COPY --from=build /app/apps/upload-service/dist ./dist
+COPY --from=build /app/packages/prisma-client ./packages/prisma-client
+COPY apps/upload-service/package.json ./
 
-# Use bun user (already exists in image)
 USER bun
 
 EXPOSE 3000
