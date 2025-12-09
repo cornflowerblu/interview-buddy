@@ -86,3 +86,10 @@ resource "azurerm_postgresql_flexible_server_configuration" "connection_throttli
   server_id = azurerm_postgresql_flexible_server.main.id
   value     = "on"
 }
+
+# Enforce minimum TLS version 1.2 for security compliance
+resource "azurerm_postgresql_flexible_server_configuration" "ssl_min_protocol_version" {
+  name      = "ssl_min_protocol_version"
+  server_id = azurerm_postgresql_flexible_server.main.id
+  value     = "TLSv1.2"
+}
