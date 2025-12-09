@@ -42,10 +42,6 @@ resource "azapi_resource" "video_indexer" {
 
   body = jsonencode({
     properties = {
-      mediaServices = {
-        # Video Indexer can work without Media Services in ARM-based mode
-        # Using the "classic" account type that doesn't require AMS
-      }
       storageServices = {
         resourceId = azurerm_storage_account.media.id
       }
