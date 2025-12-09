@@ -2,36 +2,29 @@
 FROM oven/bun:1.3.4-slim AS base
 WORKDIR /app
 
-# Install dependencies stage
-FROM base AS install
-# Copy all package.json files for workspace resolution
-COPY package.json bun.lock ./
-COPY apps/upload-service/package.json ./apps/upload-service/
-COPY packages/shared-types/package.json ./packages/shared-types/
-COPY packages/shared-utils/package.json ./packages/shared-utils/
-COPY packages/prisma-client/package.json ./packages/prisma-client/
-RUN bun install
-
-# Build stage
+# Build stage - install all deps and build
 FROM base AS build
-COPY --from=install /app/node_modules ./node_modules
-COPY --from=install /app/apps/upload-service/node_modules ./apps/upload-service/node_modules
-COPY --from=install /app/packages ./packages
-COPY . .
-# Generate Prisma client and build packages first
+COPY package.json bun.lock tsconfig.base.json ./
+COPY apps/upload-service ./apps/upload-service
+COPY packages ./packages
+RUN bun install
+# Generate Prisma client and build
 RUN cd packages/prisma-client && bunx prisma generate
-RUN bun run --filter '@interview-buddy/shared-types' build
-RUN bun run --filter '@interview-buddy/shared-utils' build
-RUN bun run --filter 'upload-service' build
+RUN cd packages/shared-types && bun run build
+RUN cd packages/shared-utils && bun run build
+RUN cd apps/upload-service && bun run build
 
-# Production stage
+# Production stage - use app directory as workdir
 FROM base AS production
 ENV NODE_ENV=production
+WORKDIR /app/apps/upload-service
 
-COPY --from=install /app/node_modules ./node_modules
+# Copy the entire built workspace structure
+COPY --from=build /app/node_modules /app/node_modules
+COPY --from=build /app/apps/upload-service/node_modules ./node_modules
 COPY --from=build /app/apps/upload-service/dist ./dist
-COPY --from=build /app/packages/prisma-client ./packages/prisma-client
-COPY apps/upload-service/package.json ./
+COPY --from=build /app/apps/upload-service/package.json ./
+COPY --from=build /app/packages/prisma-client /app/packages/prisma-client
 
 USER bun
 

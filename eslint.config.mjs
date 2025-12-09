@@ -54,10 +54,7 @@ export default tseslint.config(
         },
       ],
       '@typescript-eslint/explicit-module-boundary-types': 'off',
-      '@typescript-eslint/consistent-type-imports': [
-        'warn',
-        { prefer: 'type-imports' },
-      ],
+      '@typescript-eslint/consistent-type-imports': 'off', // NestJS DI requires runtime imports
       
       // General code quality rules
       'no-console': ['warn', { allow: ['warn', 'error'] }],
