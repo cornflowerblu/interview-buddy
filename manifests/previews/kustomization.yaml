@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - d478c60/
   - namespace.yaml
   - cf99d23/
   - a6f21c2/
