@@ -10,7 +10,7 @@ COPY apps/web/package.json ./apps/web/
 COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/shared-utils/package.json ./packages/shared-utils/
 COPY packages/prisma-client/package.json ./packages/prisma-client/
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Build application
 FROM base AS builder
