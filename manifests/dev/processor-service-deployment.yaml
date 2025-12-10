@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: processor-service
-          image: ibdevacrpuj79a.azurecr.io/processor-service:184
+          image: ibdevacrpuj79a.azurecr.io/processor-service:191
           ports:
             - containerPort: 3001
               name: http

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: ai-analyzer-service
-          image: ibdevacrpuj79a.azurecr.io/ai-analyzer-service:184
+          image: ibdevacrpuj79a.azurecr.io/ai-analyzer-service:191
           ports:
             - containerPort: 3002
               name: http
