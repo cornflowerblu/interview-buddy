@@ -26,7 +26,7 @@ stages:
       # Job 1: Lint (runs in parallel)
       - job: Lint
         displayName: 'ESLint'
-        pool: macos
+        pool: aks-agents
         steps:
           - checkout: self
             fetchDepth: 1
@@ -43,7 +43,7 @@ stages:
       # Job 2: Unit Tests (runs in parallel)
       - job: UnitTest
         displayName: 'Unit Tests'
-        pool: macos
+        pool: aks-agents
         steps:
           - checkout: self
             fetchDepth: 1
@@ -60,7 +60,7 @@ stages:
       # Job 3: Terraform Plan (if terraform changed)
       - job: TerraformPlan
         displayName: 'Terraform Plan'
-        pool: macos
+        pool: aks-agents
         condition: and(succeeded(), eq(variables['Build.Reason'], 'PullRequest'))
         steps:
           - checkout: self
@@ -101,8 +101,7 @@ stages:
     jobs:
       - job: DockerBuild
         displayName: 'Build All Images'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: aks-agents
         steps:
           - checkout: self
             fetchDepth: 1
@@ -145,8 +144,7 @@ stages:
     jobs:
       - job: BuildAndDeployPreview
         displayName: 'Build & Deploy Preview'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: aks-agents
         steps:
           - checkout: self
             persistCredentials: true
@@ -222,8 +220,7 @@ stages:
     jobs:
       - deployment: DeployToDev
         displayName: 'Deploy to Dev Environment'
-        pool:
-          vmImage: 'ubuntu-latest'
+        pool: aks-agents
         environment: 'dev'
         strategy:
           runOnce:
