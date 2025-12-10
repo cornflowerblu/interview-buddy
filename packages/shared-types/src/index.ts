@@ -75,7 +75,7 @@ export interface SpeakerInstance {
 export interface Analysis {
   id: string;
   interviewId: string;
-  
+
   // Analysis results (stored as JSON in Prisma for schema flexibility)
   speechMetrics: SpeechMetrics;
   contentAnalysis: ContentAnalysis;
@@ -87,7 +87,7 @@ export interface Analysis {
 
   // Metadata
   modelUsed: string; // Track which AI model generated this (e.g., "gpt-4o", "claude-3.5-sonnet")
-  
+
   createdAt: Date;
 }
 
@@ -120,8 +120,6 @@ export interface SentimentTimelinePoint {
   time: string; // ISO timestamp or duration
   sentiment: string; // "positive" | "neutral" | "negative"
 }
-
-
 
 // Prep Session Entity (aligned with Prisma schema)
 export interface PrepSession {

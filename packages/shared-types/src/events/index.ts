@@ -7,7 +7,7 @@
 
 /**
  * Event emitted when an interview recording is successfully uploaded to Azure Video Indexer
- * 
+ *
  * Consumed by: processor-service
  * Published by: upload-service
  */
@@ -25,7 +25,7 @@ export interface InterviewUploadedEvent {
 
 /**
  * Event emitted when Azure Video Indexer completes transcription of an interview
- * 
+ *
  * Consumed by: ai-analyzer-service
  * Published by: processor-service
  */

@@ -38,7 +38,6 @@ stages:
               export PATH="$BUN_INSTALL/bin:$PATH"
               bun run lint
             displayName: 'Run ESLint'
-            continueOnError: true # TODO: Fix lint errors and remove this
 
       # Job 2: Unit Tests (runs in parallel)
       - job: UnitTest

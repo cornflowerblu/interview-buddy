@@ -22,7 +22,7 @@ import {
   wrapError,
   asyncErrorHandler,
   retry,
-  CircuitBreaker
+  CircuitBreaker,
 } from '../index';
 
 describe('Error Handling Utilities', () => {
@@ -33,7 +33,7 @@ describe('Error Handling Utilities', () => {
         'TEST_ERROR',
         500,
         true,
-        { detail: 'test' }
+        { detail: 'test' },
       );
 
       expect(error.message).toBe('Test error');
@@ -129,7 +129,9 @@ describe('Error Handling Utilities', () => {
       const error = new ServiceUnavailableError('transcription-service');
       expect(error.statusCode).toBe(503);
       expect(error.code).toBe('SERVICE_UNAVAILABLE');
-      expect(error.message).toBe("Service 'transcription-service' is unavailable");
+      expect(error.message).toBe(
+        "Service 'transcription-service' is unavailable",
+      );
     });
   });
 
@@ -299,7 +301,8 @@ describe('Error Handling Utilities', () => {
     });
 
     it('should retry on failure', async () => {
-      const fn = jest.fn()
+      const fn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1'))
         .mockRejectedValueOnce(new Error('Attempt 2'))
         .mockResolvedValue('success');
@@ -311,12 +314,15 @@ describe('Error Handling Utilities', () => {
 
     it('should throw after max attempts', async () => {
       const fn = jest.fn().mockRejectedValue(new Error('Failed'));
-      await expect(retry(fn, { maxAttempts: 3, delayMs: 10 })).rejects.toThrow('Failed');
+      await expect(retry(fn, { maxAttempts: 3, delayMs: 10 })).rejects.toThrow(
+        'Failed',
+      );
       expect(fn).toHaveBeenCalledTimes(3);
     });
 
     it('should call onRetry callback', async () => {
-      const fn = jest.fn()
+      const fn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1'))
         .mockResolvedValue('success');
 
@@ -328,7 +334,8 @@ describe('Error Handling Utilities', () => {
     });
 
     it('should use exponential backoff', async () => {
-      const fn = jest.fn()
+      const fn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1'))
         .mockRejectedValueOnce(new Error('Attempt 2'))
         .mockResolvedValue('success');
@@ -342,7 +349,8 @@ describe('Error Handling Utilities', () => {
     });
 
     it('should use linear backoff', async () => {
-      const fn = jest.fn()
+      const fn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Attempt 1'))
         .mockRejectedValueOnce(new Error('Attempt 2'))
         .mockResolvedValue('success');
@@ -373,7 +381,9 @@ describe('Error Handling Utilities', () => {
       }
 
       expect(breaker.getState()).toBe('OPEN');
-      await expect(breaker.execute(fn)).rejects.toThrow('Circuit breaker is OPEN');
+      await expect(breaker.execute(fn)).rejects.toThrow(
+        'Circuit breaker is OPEN',
+      );
     });
 
     it('should transition to half-open after timeout', async () => {
@@ -393,7 +403,7 @@ describe('Error Handling Utilities', () => {
       expect(breaker.getState()).toBe('OPEN');
 
       // Wait for timeout
-      await new Promise(resolve => setTimeout(resolve, 150));
+      await new Promise((resolve) => setTimeout(resolve, 150));
 
       // Next request should succeed and close circuit
       const result = await breaker.execute(fn);
@@ -402,7 +412,8 @@ describe('Error Handling Utilities', () => {
 
     it('should reset failure count on success', async () => {
       const breaker = new CircuitBreaker(3, 1000);
-      const fn = jest.fn()
+      const fn = jest
+        .fn()
         .mockRejectedValueOnce(new Error('Failed'))
         .mockResolvedValue('success');
 

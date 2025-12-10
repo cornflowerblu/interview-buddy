@@ -261,7 +261,7 @@ export interface ListInterviewsResponse {
 
 /**
  * Error Response
- * 
+ *
  * Standard error response format with distributed tracing support
  */
 export interface ErrorResponse {

@@ -1,11 +1,11 @@
 /**
  * Root Jest Configuration for Interview Buddy Monorepo
- * 
+ *
  * This configuration orchestrates testing across all workspaces:
  * - NestJS microservices (upload-service, processor-service, ai-analyzer-service)
  * - Next.js frontend (web)
  * - Shared packages (shared-types, shared-utils, prisma-client)
- * 
+ *
  * Test Types:
  * - Unit: *.spec.ts files (business logic, components)
  * - Integration: *.integration.spec.ts files (database, Redis, service communication)
@@ -99,12 +99,15 @@ module.exports = {
       ],
       moduleFileExtensions: ['js', 'jsx', 'json', 'ts', 'tsx'],
       transform: {
-        '^.+\\.(t|j)sx?$': ['ts-jest', {
-          tsconfig: {
-            jsx: 'react',
-            esModuleInterop: true,
+        '^.+\\.(t|j)sx?$': [
+          'ts-jest',
+          {
+            tsconfig: {
+              jsx: 'react',
+              esModuleInterop: true,
+            },
           },
-        }],
+        ],
       },
       collectCoverageFrom: [
         'app/**/*.{ts,tsx}',
@@ -120,7 +123,8 @@ module.exports = {
         // Handle CSS imports (without CSS modules)
         '^.+\\.(css|sass|scss)$': '<rootDir>/__mocks__/styleMock.js',
         // Handle image imports
-        '^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$': '<rootDir>/__mocks__/fileMock.js',
+        '^.+\\.(jpg|jpeg|png|gif|webp|avif|svg)$':
+          '<rootDir>/__mocks__/fileMock.js',
       },
       setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
     },
@@ -150,9 +154,7 @@ module.exports = {
       transform: {
         '^.+\\.(t|j)s$': 'ts-jest',
       },
-      collectCoverageFrom: [
-        'src/**/*.(t|j)s',
-      ],
+      collectCoverageFrom: ['src/**/*.(t|j)s'],
       coverageDirectory: '<rootDir>/coverage',
     },
     {
@@ -164,9 +166,7 @@ module.exports = {
       transform: {
         '^.+\\.(t|j)s$': 'ts-jest',
       },
-      collectCoverageFrom: [
-        'src/**/*.(t|j)s',
-      ],
+      collectCoverageFrom: ['src/**/*.(t|j)s'],
       coverageDirectory: '<rootDir>/coverage',
     },
   ],
@@ -194,18 +194,10 @@ module.exports = {
     '.*\\.dto\\.ts$',
     'main\\.ts$',
   ],
-  
+
   // Ignore patterns
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/',
-    '/.next/',
-    '/coverage/',
-  ],
-  
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/.next/', '/coverage/'],
+
   // Module path ignore patterns
-  modulePathIgnorePatterns: [
-    '<rootDir>/dist/',
-    '<rootDir>/.next/',
-  ],
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/.next/'],
 };

@@ -10,7 +10,7 @@ import {
   extractCorrelationId,
   configureDefaultLogger,
   getDefaultLogger,
-  log
+  log,
 } from '../index';
 
 describe('Logging Utilities', () => {
@@ -29,14 +29,14 @@ describe('Logging Utilities', () => {
     describe('createLogger', () => {
       it('should create a logger instance', () => {
         const logger = createLogger({
-          serviceName: 'test-service'
+          serviceName: 'test-service',
         });
         expect(logger).toBeInstanceOf(Logger);
       });
 
       it('should use default environment if not provided', () => {
         const logger = createLogger({
-          serviceName: 'test-service'
+          serviceName: 'test-service',
         });
         logger.info('test message');
         expect(consoleLogSpy).toHaveBeenCalled();
@@ -50,7 +50,7 @@ describe('Logging Utilities', () => {
         logger = createLogger({
           serviceName: 'test-service',
           minLevel: LogLevel.DEBUG,
-          prettyPrint: false
+          prettyPrint: false,
         });
       });
 
@@ -105,7 +105,7 @@ describe('Logging Utilities', () => {
         const logger = createLogger({
           serviceName: 'test-service',
           minLevel: LogLevel.WARN,
-          prettyPrint: false
+          prettyPrint: false,
         });
 
         logger.debug('debug message');
@@ -120,7 +120,7 @@ describe('Logging Utilities', () => {
         const logger = createLogger({
           serviceName: 'test-service',
           minLevel: LogLevel.INFO,
-          prettyPrint: false
+          prettyPrint: false,
         });
 
         logger.debug('debug message');
@@ -143,7 +143,7 @@ describe('Logging Utilities', () => {
       beforeEach(() => {
         logger = createLogger({
           serviceName: 'test-service',
-          prettyPrint: false
+          prettyPrint: false,
         });
       });
 
@@ -186,7 +186,7 @@ describe('Logging Utilities', () => {
       it('should create child logger with additional context', () => {
         const parentLogger = createLogger({
           serviceName: 'test-service',
-          prettyPrint: false
+          prettyPrint: false,
         });
         parentLogger.setContext({ correlationId: 'xyz' });
 
@@ -202,7 +202,7 @@ describe('Logging Utilities', () => {
       it('should not affect parent logger context', () => {
         const parentLogger = createLogger({
           serviceName: 'test-service',
-          prettyPrint: false
+          prettyPrint: false,
         });
 
         const childLogger = parentLogger.child({ userId: '123' });
@@ -222,7 +222,7 @@ describe('Logging Utilities', () => {
         const logger = createLogger({
           serviceName: 'test-service',
           environment: 'development',
-          prettyPrint: true
+          prettyPrint: true,
         });
 
         logger.info('test message');
@@ -238,7 +238,7 @@ describe('Logging Utilities', () => {
       it('should include ISO timestamp in log entries', () => {
         const logger = createLogger({
           serviceName: 'test-service',
-          prettyPrint: false
+          prettyPrint: false,
         });
 
         logger.info('test message');
@@ -268,21 +268,21 @@ describe('Logging Utilities', () => {
   describe('extractCorrelationId', () => {
     it('should extract correlation ID from headers', () => {
       const headers = {
-        'x-correlation-id': 'test-correlation-id'
+        'x-correlation-id': 'test-correlation-id',
       };
       expect(extractCorrelationId(headers)).toBe('test-correlation-id');
     });
 
     it('should extract correlation ID from capitalized headers', () => {
       const headers = {
-        'X-Correlation-ID': 'test-correlation-id'
+        'X-Correlation-ID': 'test-correlation-id',
       };
       expect(extractCorrelationId(headers)).toBe('test-correlation-id');
     });
 
     it('should handle array values', () => {
       const headers = {
-        'x-correlation-id': ['id1', 'id2']
+        'x-correlation-id': ['id1', 'id2'],
       };
       expect(extractCorrelationId(headers)).toBe('id1');
     });
@@ -296,7 +296,7 @@ describe('Logging Utilities', () => {
   describe('default logger', () => {
     it('should configure default logger', () => {
       configureDefaultLogger({
-        serviceName: 'test-service'
+        serviceName: 'test-service',
       });
       const defaultLogger = getDefaultLogger();
       expect(defaultLogger).toBeInstanceOf(Logger);
@@ -307,14 +307,14 @@ describe('Logging Utilities', () => {
       expect(() => {
         // This would fail in a fresh environment
         // For this test, we just verify the function exists
-        log.info;
+        return log.info;
       }).toBeDefined();
     });
 
     it('should provide convenience log methods', () => {
       configureDefaultLogger({
         serviceName: 'test-service',
-        prettyPrint: false
+        prettyPrint: false,
       });
 
       log.info('test message');

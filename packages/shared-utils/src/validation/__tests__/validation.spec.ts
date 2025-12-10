@@ -14,7 +14,7 @@ import {
   getFileExtension,
   isValidEmail,
   IsInterviewTypeConstraint,
-  IsInterviewStatusConstraint
+  IsInterviewStatusConstraint,
 } from '../index';
 import { validate } from 'class-validator';
 
@@ -84,7 +84,7 @@ describe('Validation Utilities', () => {
   describe('IsValidMimeType', () => {
     it('should accept valid video MIME types', async () => {
       const validTypes = ['video/mp4', 'video/quicktime', 'video/webm'];
-      
+
       for (const mimeType of validTypes) {
         const dto = new TestMimeTypeDto();
         dto.mimeType = mimeType;
@@ -94,8 +94,14 @@ describe('Validation Utilities', () => {
     });
 
     it('should accept valid audio MIME types', async () => {
-      const validTypes = ['audio/mp4', 'audio/x-m4a', 'audio/wav', 'audio/wave', 'audio/x-wav'];
-      
+      const validTypes = [
+        'audio/mp4',
+        'audio/x-m4a',
+        'audio/wav',
+        'audio/wave',
+        'audio/x-wav',
+      ];
+
       for (const mimeType of validTypes) {
         const dto = new TestMimeTypeDto();
         dto.mimeType = mimeType;
@@ -105,8 +111,13 @@ describe('Validation Utilities', () => {
     });
 
     it('should reject invalid MIME types', async () => {
-      const invalidTypes = ['video/avi', 'audio/mp3', 'application/pdf', 'text/plain'];
-      
+      const invalidTypes = [
+        'video/avi',
+        'audio/mp3',
+        'application/pdf',
+        'text/plain',
+      ];
+
       for (const mimeType of invalidTypes) {
         const dto = new TestMimeTypeDto();
         dto.mimeType = mimeType;
@@ -136,7 +147,7 @@ describe('Validation Utilities', () => {
         '123',
         'not-a-uuid',
         '550e8400-e29b-41d4-a716',
-        '550e8400-e29b-51d4-a716-446655440000' // v5, not v4
+        '550e8400-e29b-51d4-a716-446655440000', // v5, not v4
       ];
 
       for (const id of invalidIds) {
@@ -151,7 +162,7 @@ describe('Validation Utilities', () => {
   describe('IsConfidenceScore', () => {
     it('should accept scores between 0 and 1', async () => {
       const validScores = [0, 0.5, 0.75, 1];
-      
+
       for (const score of validScores) {
         const dto = new TestConfidenceScoreDto();
         dto.score = score;
@@ -162,7 +173,7 @@ describe('Validation Utilities', () => {
 
     it('should reject scores outside 0-1 range', async () => {
       const invalidScores = [-0.1, 1.1, 100];
-      
+
       for (const score of invalidScores) {
         const dto = new TestConfidenceScoreDto();
         dto.score = score;
@@ -175,7 +186,7 @@ describe('Validation Utilities', () => {
   describe('IsScore', () => {
     it('should accept scores between 0 and 100', async () => {
       const validScores = [0, 50, 75, 100];
-      
+
       for (const score of validScores) {
         const dto = new TestScoreDto();
         dto.score = score;
@@ -186,7 +197,7 @@ describe('Validation Utilities', () => {
 
     it('should reject scores outside 0-100 range', async () => {
       const invalidScores = [-1, 101, 200];
-      
+
       for (const score of invalidScores) {
         const dto = new TestScoreDto();
         dto.score = score;
@@ -200,7 +211,7 @@ describe('Validation Utilities', () => {
     it('should accept valid interview types', () => {
       const constraint = new IsInterviewTypeConstraint();
       const validTypes = ['behavioral', 'technical', 'phone', 'panel'];
-      
+
       for (const type of validTypes) {
         expect(constraint.validate(type, {} as any)).toBe(true);
       }
@@ -209,7 +220,7 @@ describe('Validation Utilities', () => {
     it('should reject invalid interview types', () => {
       const constraint = new IsInterviewTypeConstraint();
       const invalidTypes = ['coding', 'screening', 'invalid', ''];
-      
+
       for (const type of invalidTypes) {
         expect(constraint.validate(type, {} as any)).toBe(false);
       }
@@ -219,8 +230,15 @@ describe('Validation Utilities', () => {
   describe('IsInterviewStatusConstraint', () => {
     it('should accept valid interview statuses', () => {
       const constraint = new IsInterviewStatusConstraint();
-      const validStatuses = ['uploading', 'uploaded', 'transcribing', 'analyzing', 'completed', 'failed'];
-      
+      const validStatuses = [
+        'uploading',
+        'uploaded',
+        'transcribing',
+        'analyzing',
+        'completed',
+        'failed',
+      ];
+
       for (const status of validStatuses) {
         expect(constraint.validate(status, {} as any)).toBe(true);
       }
@@ -229,7 +247,7 @@ describe('Validation Utilities', () => {
     it('should reject invalid interview statuses', () => {
       const constraint = new IsInterviewStatusConstraint();
       const invalidStatuses = ['pending', 'processing', 'invalid', ''];
-      
+
       for (const status of invalidStatuses) {
         expect(constraint.validate(status, {} as any)).toBe(false);
       }
@@ -259,11 +277,15 @@ describe('Validation Utilities', () => {
   describe('sanitizeFileName', () => {
     it('should remove special characters', () => {
       expect(sanitizeFileName('test@file#name.txt')).toBe('test_file_name.txt');
-      expect(sanitizeFileName('file with spaces.mp4')).toBe('file_with_spaces.mp4');
+      expect(sanitizeFileName('file with spaces.mp4')).toBe(
+        'file_with_spaces.mp4',
+      );
     });
 
     it('should preserve dots, hyphens, and underscores', () => {
-      expect(sanitizeFileName('test-file_name.v2.txt')).toBe('test-file_name.v2.txt');
+      expect(sanitizeFileName('test-file_name.v2.txt')).toBe(
+        'test-file_name.v2.txt',
+      );
     });
 
     it('should truncate long filenames', () => {
@@ -324,7 +346,7 @@ describe('Validation Utilities', () => {
         'user@example.com',
         'test.user@example.com',
         'user+tag@example.co.uk',
-        'user123@test-domain.com'
+        'user123@test-domain.com',
       ];
 
       for (const email of validEmails) {
@@ -339,7 +361,7 @@ describe('Validation Utilities', () => {
         'user@',
         'user @example.com',
         'user@example',
-        ''
+        '',
       ];
 
       for (const email of invalidEmails) {
