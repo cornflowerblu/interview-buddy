@@ -5,7 +5,7 @@ metadata:
   namespace: dev
 spec:
   hosts:
-    - "dev.slingshotgrp.com"
+    - "dev-ibuddy.slingshotgrp.com"
   gateways:
     - default/nextjsportfolio-gateway
   http:
