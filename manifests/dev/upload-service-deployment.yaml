@@ -28,6 +28,8 @@ spec:
               value: "development"
             - name: PORT
               value: "3000"
+            - name: PROCESSOR_SERVICE_URL
+              value: "http://processor-service.dev.svc.cluster.local:3001"
           resources:
             requests:
               memory: "128Mi"

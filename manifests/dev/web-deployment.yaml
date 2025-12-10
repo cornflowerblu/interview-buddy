@@ -28,6 +28,8 @@ spec:
               value: "development"
             - name: PORT
               value: "3000"
+            - name: UPLOAD_SERVICE_URL
+              value: "http://upload-service.dev.svc.cluster.local:3000"
           resources:
             requests:
               memory: "128Mi"
