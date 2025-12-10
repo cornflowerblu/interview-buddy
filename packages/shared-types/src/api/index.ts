@@ -292,3 +292,8 @@ export interface HealthCheckResponse {
     };
   };
 }
+
+/**
+ * End-to-End Health Check Types
+ */
+export * from './health';
