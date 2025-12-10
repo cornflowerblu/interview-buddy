@@ -13,8 +13,4 @@ spec:
   sourceRef:
     kind: GitRepository
     name: interview-buddy
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: Deployment
-      name: "*"
-      namespace: previews
+  # No healthChecks - previews may be empty when no feature branches exist
