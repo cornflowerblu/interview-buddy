@@ -101,7 +101,8 @@ stages:
     jobs:
       - job: DockerBuild
         displayName: 'Build All Images'
-        pool: aks-agents
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1
@@ -144,7 +145,8 @@ stages:
     jobs:
       - job: BuildAndDeployPreview
         displayName: 'Build & Deploy Preview'
-        pool: aks-agents
+        pool:
+          vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             persistCredentials: true
