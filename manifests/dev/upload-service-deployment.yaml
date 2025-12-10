@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: upload-service
-          image: ibdevacrpuj79a.azurecr.io/upload-service:168
+          image: ibdevacrpuj79a.azurecr.io/upload-service:170
           ports:
             - containerPort: 3000
               name: http
