@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: previews-placeholder
+  namespace: previews
+data:
+  description: "Placeholder to keep Flux healthy when no preview environments exist"
